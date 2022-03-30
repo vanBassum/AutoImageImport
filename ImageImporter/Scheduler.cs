@@ -33,12 +33,13 @@ public class Scheduler
     public void Execute()
     {
         ImageProcessor processor = new ImageProcessor();
+        AppSettings.ImportFolder = @"C:\ImgTest\Import";
         foreach (string file in Directory.GetFiles(AppSettings.ImportFolder))
         {
             string relativeFile = Path.GetRelativePath(AppSettings.ImportFolder, file);
             if (!AppDBContext.Pictures.Any(a => a.RelativePath == relativeFile))
             {
-                byte[] aHash = processor.CalculateAverageHashWithColor(file);
+                byte[] aHash = processor.CalculateAverageHash(file);
                 //if (!AppDBContext.Pictures.Any(a => a.AHash == aHash))
                 {
                     Picture pic = new Picture();
@@ -61,7 +62,7 @@ public class Scheduler
 
                 double match = 1-((double)distance / (double)pictures[i].AHash.Length);
 
-                if(match > 0.05)
+                if(match > 0.5)
                 {
                     matches.Add((match, pictures[i], pictures[p]));
                     
@@ -81,8 +82,8 @@ public class Scheduler
 
 public class ImageProcessor
 {
-    public int HashWidth { get; set; } = 16;
-    public int HashHeight { get; set; } = 16;
+    public int HashWidth { get; set; } = 32;
+    public int HashHeight { get; set; } = 32;
 
     //http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
     public byte[] CalculateAverageHash(string filename)
