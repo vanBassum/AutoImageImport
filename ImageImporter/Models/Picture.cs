@@ -1,12 +1,6 @@
 ﻿using ImageImporter.Application;
-using Microsoft.EntityFrameworkCore;
 using SixLabors.ImageSharp;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ImageImporter.Models
 {
@@ -15,15 +9,15 @@ namespace ImageImporter.Models
         [Key]
         public int Id { get; set; }
         [MaxLength(128)]
-        public byte[] HashA { get; set; }
+        public byte[]? HashA { get; set; }
         [MaxLength(128)]
-        public byte[] HashD { get; set; }
+        public byte[]? HashD { get; set; }
         public string? RelativePath { get; set; }
 
 
         public override string ToString()
         {
-            return $"HashA = '{Convert.ToHexString(HashA,0, 32)}' Filename = '{RelativePath}'";
+            return $"HashA = '{Convert.ToHexString(HashA, 0, 32)}' Filename = '{RelativePath}'";
         }
 
         public static Picture? Generate(AppSettings settings, string file)

@@ -49,6 +49,18 @@ namespace ImageImporter.Application.Commands
             Console.WriteLine(msg);
         }
 
+        public void Log(params (string msg, int maxLen)[] msg)
+        {
+            for(int i = 0; i< msg.Length; i++)
+            {
+                string message = msg[i].msg;
+                if (message.Length > msg[i].maxLen)
+                    message = message.Substring(0, msg[i].maxLen);
+                Console.Write(message + new string(' ', msg[i].maxLen - message.Length + 1));
+            }
+            Console.WriteLine("");
+        }
+
         public void RegisterCommand(string name, BaseCommand command)
         {
             command.SetEngine(this);
