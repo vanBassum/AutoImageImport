@@ -2,13 +2,16 @@
 {
     public class Help : BaseCommand
     {
-        public Help(ConsoleCommands consoleCommands, AppSettings appSettings, AppDBContext appDBContext) : base(consoleCommands, appSettings, appDBContext)
+        protected Engine Engine { get; }
+
+        public Help(Engine engine)
         {
+            Engine = engine;
         }
 
         public override void Execute(string args)
         {
-            ConsoleCommands.PrintHelp();
+            Engine.PrintHelp();
         }
     }
 

@@ -2,18 +2,23 @@
 {
     public abstract class BaseCommand
     {
-        protected ConsoleCommands ConsoleCommands { get; }
-        protected AppSettings AppSettings { get; }
-        protected AppDBContext AppDBContext { get; }
-
-        protected BaseCommand(ConsoleCommands consoleCommands, AppSettings appSettings, AppDBContext appDBContext)
-        {
-            ConsoleCommands = consoleCommands;
-            AppSettings = appSettings;
-            AppDBContext = appDBContext;
-        }
+        protected Engine Engine { get; private set; }
+        //protected AppSettings AppSettings { get; }
+        //protected AppDBContext AppDBContext { get; }
+        //
+        //protected BaseCommand(Engine consoleCommands, AppSettings appSettings, AppDBContext appDBContext)
+        //{
+        //    Engine = consoleCommands;
+        //    AppSettings = appSettings;
+        //    AppDBContext = appDBContext;
+        //}
 
         public abstract void Execute(string args);
+
+        public void SetEngine(Engine engine)
+        {
+            Engine = engine;
+        }
     }
 
 }

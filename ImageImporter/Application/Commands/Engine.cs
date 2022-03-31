@@ -8,22 +8,15 @@ namespace ImageImporter.Application.Commands
 {
 
 
-    public class ConsoleCommands
+    public class Engine
     {
         Dictionary<string, BaseCommand> commands = new Dictionary<string, BaseCommand>();
-
-        private AppSettings AppSettings { get; set; }
-        private AppDBContext AppDBContext { get; set; }
         private bool work = true;
 
-        public ConsoleCommands(AppSettings appSettings, AppDBContext appDBContext)
+        public Engine()
         {
-            AppSettings = appSettings;
-            AppDBContext = appDBContext;
-
-            RegisterCommand(new Exit(this, appSettings, appDBContext));
-            RegisterCommand(new Help(this, appSettings, appDBContext));
-            RegisterCommand(new Import(this, appSettings, appDBContext));
+            RegisterCommand(new Exit(this));
+            RegisterCommand(new Help(this));
         }
 
         public void Execute()
@@ -58,12 +51,13 @@ namespace ImageImporter.Application.Commands
 
         public void RegisterCommand(string name, BaseCommand command)
         {
+            command.SetEngine(this);
             commands.Add(name.ToLowerInvariant(), command);
         }
 
         public void RegisterCommand(BaseCommand command)
         {
-            commands.Add(command.GetType().Name.ToLowerInvariant(), command);
+            RegisterCommand(command.GetType().Name.ToLowerInvariant(), command);
         }
 
         public void PrintHelp()

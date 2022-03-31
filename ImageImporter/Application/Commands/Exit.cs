@@ -2,13 +2,16 @@
 {
     public class Exit : BaseCommand
     {
-        public Exit(ConsoleCommands consoleCommands, AppSettings appSettings, AppDBContext appDBContext) : base(consoleCommands, appSettings, appDBContext)
+        private Engine Engine { get; }
+
+        public Exit(Engine engine)
         {
+            Engine = engine;
         }
 
         public override void Execute(string args)
         {
-            ConsoleCommands.Exit();
+            Engine.Exit();
         }
     }
 

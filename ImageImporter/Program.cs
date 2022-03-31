@@ -7,21 +7,16 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-Console.WriteLine("Hello, World!");
-
-List<string> files = new List<string> { @"C:\Users\bas\Desktop\testje\BL 1.jpg",
-                                                @"C:\Users\bas\Desktop\testje\BL 2.jpg",
-                                                @"C:\Users\bas\Desktop\testje\WA 1.jpeg" };
 
 IConfiguration Configuration = null;
 
 Host.CreateDefaultBuilder()
         .ConfigureAppConfiguration(Configure)
         .ConfigureServices(ConfigureServices)
-        .ConfigureServices(services => services.AddSingleton<ConsoleCommands>())
+        .ConfigureServices(services => services.AddSingleton<Application>())
         .Build()
         .Services
-        .GetService<ConsoleCommands>()?
+        .GetService<Application>()?
         .Execute();
 
 
