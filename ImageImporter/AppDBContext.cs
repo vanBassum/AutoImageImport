@@ -17,7 +17,7 @@ public class AppDBContext : DbContext
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
 
-
+        optionsBuilder.UseMySQL("Server=127.0.0.1;Port=3307;Database=imageimporter;Uid=imageimporter;Pwd=GUhFVbuTjhxK2m9r;");
         
         optionsBuilder.UseLazyLoadingProxies();
     }

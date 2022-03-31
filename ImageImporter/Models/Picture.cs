@@ -8,14 +8,14 @@ using System.Threading.Tasks;
 
 namespace ImageImporter.Models
 {
-    [Index(nameof(Id), nameof(AHash))]
     public class Picture
     {
         [Key]
         public int Id { get; set; }
-
-        [MaxLength(1024)]
-        public byte[]? AHash { get; set; }
+        [MaxLength(32)]
+        public byte[] HashA { get; set; }
+        [MaxLength(32)]
+        public byte[] HashD { get; set; }
         public string? RelativePath { get; set; }
     }
 }

@@ -4,7 +4,7 @@ using MySql.EntityFrameworkCore.Metadata;
 
 namespace ImageImporter.Migrations
 {
-    public partial class image : Migration
+    public partial class picture : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,18 +14,14 @@ namespace ImageImporter.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    AHash = table.Column<byte[]>(type: "varbinary(1024)", maxLength: 1024, nullable: true),
+                    HashA = table.Column<byte[]>(type: "varbinary(32)", maxLength: 32, nullable: false),
+                    HashD = table.Column<byte[]>(type: "varbinary(32)", maxLength: 32, nullable: false),
                     RelativePath = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Pictures", x => x.Id);
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Pictures_Id_AHash",
-                table: "Pictures",
-                columns: new[] { "Id", "AHash" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

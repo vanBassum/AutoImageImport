@@ -2,6 +2,7 @@
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using SixLabors.ImageSharp.Processing;
+using System.Diagnostics;
 
 // See https://aka.ms/new-console-template for more information
 
@@ -16,34 +17,48 @@ public class Scheduler
     }
 
 
-    public int HammingDistance(byte[] a, byte[] b)
+    public double HammingDistance(byte[] a, byte[] b)
     {
         if (a.Length != b.Length)
             throw new Exception();
-        int distance = 0;
+        double distance = 0;
         for (int i = 0; i < a.Length; i++)
         {
-            if (a[i] != b[i])
-                distance++;
+            for(int bit=0; bit<8; bit++)
+            {
+                byte mask = (byte)(1<<bit);
+                if((a[i] & mask)!= (b[i] & mask))
+                    distance++;
+            }
+
+            //if (a[i] != b[i])
+            //    distance++;    
         }
-        return distance;
+        return distance /= a.Length * 8;
     }
 
 
     public void Execute()
     {
-        ImageProcessor processor = new ImageProcessor();
-        AppSettings.ImportFolder = @"C:\ImgTest\Import";
+        IImageHashGenerator aHashGenerator = new ImageAHashGenerator();
+        IImageHashGenerator dHashGenerator = new ImageDHashGenerator();
+
         foreach (string file in Directory.GetFiles(AppSettings.ImportFolder))
         {
             string relativeFile = Path.GetRelativePath(AppSettings.ImportFolder, file);
             if (!AppDBContext.Pictures.Any(a => a.RelativePath == relativeFile))
             {
-                byte[] aHash = processor.CalculateAverageHash(file);
+                Stopwatch stopwatch1 = Stopwatch.StartNew();
+                var aHash = aHashGenerator.Generate(file);
+                stopwatch1.Stop();
+                Stopwatch stopwatch2 = Stopwatch.StartNew();
+                var dHash = dHashGenerator.Generate(file);
+                stopwatch2.Stop();
                 //if (!AppDBContext.Pictures.Any(a => a.AHash == aHash))
                 {
                     Picture pic = new Picture();
-                    pic.AHash = aHash;
+                    pic.HashA = aHash;
+                    pic.HashD = dHash;
                     pic.RelativePath = relativeFile;
                     AppDBContext.Add(pic);
                 }
@@ -52,27 +67,40 @@ public class Scheduler
         AppDBContext.SaveChanges();
 
 
-        List<(double percentage, Picture picA, Picture picB)> matches = new List<(double, Picture, Picture)>();
+
+
+        List<(string method, double percentage, Picture picA, Picture picB)> matches = new List<(string, double, Picture, Picture)>();
         var pictures = AppDBContext.Pictures.ToList();
         for (int i = 0; i < pictures.Count; i++)
         {
             for (int p = i + 1; p < pictures.Count; p++)
             {
-                int distance = HammingDistance(pictures[i].AHash, pictures[p].AHash);
+                double distance = HammingDistance(pictures[i].HashA, pictures[p].HashA);
+                double match = (double)1 - distance;
 
-                double match = 1-((double)distance / (double)pictures[i].AHash.Length);
-
-                if(match > 0.5)
+                if(match > 0.0)
                 {
-                    matches.Add((match, pictures[i], pictures[p]));
-                    
+                    matches.Add(("HashA", match, pictures[i], pictures[p]));
                 }
             }
         }
 
-        foreach(var match in matches.OrderBy(a=>a.percentage))
+        for (int i = 0; i < pictures.Count; i++)
         {
-            Console.WriteLine($"{match.percentage.ToString("P")}, {match.picA.RelativePath} | {match.picB.RelativePath}");
+            for (int p = i + 1; p < pictures.Count; p++)
+            {
+                double distance = HammingDistance(pictures[i].HashD, pictures[p].HashD);
+                double match = (double)1 - distance;
+                if (match > 0.0)
+                {
+                    matches.Add(("HashD", match, pictures[i], pictures[p]));
+                }
+            }
+        }
+
+        foreach (var match in matches.OrderBy(a=>a.percentage))
+        {
+            Console.WriteLine($"{match.method} {match.percentage.ToString("P")}, {match.picA.RelativePath} | {match.picB.RelativePath}");
         }
 
     }
@@ -80,13 +108,70 @@ public class Scheduler
 
 
 
-public class ImageProcessor
-{
-    public int HashWidth { get; set; } = 32;
-    public int HashHeight { get; set; } = 32;
 
-    //http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
-    public byte[] CalculateAverageHash(string filename)
+
+
+
+public interface IImageHashGenerator
+{
+    int HashWidth { get; set; } 
+    int HashHeight { get; set; }
+    byte[] Generate(string filename);
+}
+
+
+
+
+public class ImageDHashGenerator : IImageHashGenerator
+{
+    public int HashWidth { get; set; } = 16;
+    public int HashHeight { get; set; } = 16;
+    public byte[] Generate(string filename)
+    {
+        List<byte> data = new List<byte>();
+
+        using (var image = Image.Load<Rgba32>(filename))
+        {
+            image.Mutate(x => x
+                        .AutoOrient()
+                        .Resize(HashWidth+1, HashHeight)
+                        .Grayscale());
+            int i = 0;
+            byte b = 0;
+            for (int y = 0; y < image.Height; y++)
+            {
+                byte prevPx = image[0, y].R;
+                for (int x = 1; x < image.Width; x++)
+                {
+                    if (i == 0)
+                        b = 0;
+
+                    byte pxVal = image[x, y].R;
+                    if (pxVal > prevPx)
+                    {
+                        b |= (byte)(0x80 >> i);
+                    }
+                    i++;
+                    if (i == 8)
+                    {
+                        data.Add(b);
+                        i = 0;
+                    }
+                }
+            }
+        }
+        return data.ToArray();
+    }
+}
+
+
+
+
+public class ImageAHashGenerator : IImageHashGenerator
+{
+    public int HashWidth { get; set; } = 16;
+    public int HashHeight { get; set; } = 16;
+    public byte[] Generate(string filename)
     {
         List<byte> data = new List<byte>();
 
@@ -97,9 +182,7 @@ public class ImageProcessor
                         .Resize(HashWidth, HashHeight)
                         .Grayscale());
 
-
             long mean = 0;
-
             for (int y = 0; y < image.Height; y++)
             {
                 for (int x = 0; x < image.Width; x++)
@@ -107,9 +190,7 @@ public class ImageProcessor
                     mean += image[x, y].R;
                 }
             }
-
             mean /= image.Height * image.Width;
-
             int i = 0;
             byte b = 0;
             for (int y = 0; y < image.Height; y++)
@@ -133,77 +214,8 @@ public class ImageProcessor
                 }
             }
         }
-
-        return data.ToArray();
-    }
-
-
-
-    public byte[] CalculateAverageHashWithColor(string filename)
-    {
-        List<byte> data = new List<byte>();
-
-        using (var image = Image.Load<Rgba32>(filename))
-        {
-            image.Mutate(x => x
-                        .AutoOrient()
-                        .Resize(HashWidth, HashHeight));
-
-            long meanR = 0;
-            long meanG = 0;
-            long meanB = 0;
-
-            for (int y = 0; y < image.Height; y++)
-            {
-                for (int x = 0; x < image.Width; x++)
-                {
-                    meanR += image[x, y].R;
-                    meanG += image[x, y].G;
-                    meanB += image[x, y].B;
-                }
-            }
-
-
-            meanR /= HashWidth * HashHeight;
-            meanG /= HashWidth * HashHeight;
-            meanB /= HashWidth * HashHeight;
-
-
-
-            int i = 0;
-            byte bR = 0;
-            byte bG = 0;
-            byte bB = 0;
-            for (int y = 0; y < image.Height; y++)
-            {
-                for (int x = 0; x < image.Width; x++)
-                {
-                    if (i == 0)
-                        bR = bG = bB = 0;
-
-                    var pixel = image[x, y];
-
-                    if(pixel.R >meanR)
-                        bR |= (byte)(0x80 >> i);
-
-                    if (pixel.G > meanG)
-                        bG |= (byte)(0x80 >> i);
-
-                    if (pixel.B > meanB)
-                        bB |= (byte)(0x80 >> i);
-
-                    i++;
-                    if (i == 8)
-                    {
-                        data.Add(bR);
-                        data.Add(bG);
-                        data.Add(bB);
-                        i = 0;
-                    }
-                }
-            }
-        }
-
         return data.ToArray();
     }
 }
+
+

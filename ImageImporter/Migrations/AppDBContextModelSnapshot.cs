@@ -22,16 +22,20 @@ namespace ImageImporter.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<byte[]>("AHash")
-                        .HasMaxLength(1024)
-                        .HasColumnType("varbinary(1024)");
+                    b.Property<byte[]>("HashA")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("varbinary(32)");
+
+                    b.Property<byte[]>("HashD")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("varbinary(32)");
 
                     b.Property<string>("RelativePath")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Id", "AHash");
 
                     b.ToTable("Pictures");
                 });
