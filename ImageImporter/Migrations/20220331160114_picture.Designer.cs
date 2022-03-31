@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ImageImporter.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20220331141415_picture")]
+    [Migration("20220331160114_picture")]
     partial class picture
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,13 +26,13 @@ namespace ImageImporter.Migrations
 
                     b.Property<byte[]>("HashA")
                         .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("varbinary(32)");
+                        .HasMaxLength(128)
+                        .HasColumnType("varbinary(128)");
 
                     b.Property<byte[]>("HashD")
                         .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("varbinary(32)");
+                        .HasMaxLength(128)
+                        .HasColumnType("varbinary(128)");
 
                     b.Property<string>("RelativePath")
                         .HasColumnType("text");

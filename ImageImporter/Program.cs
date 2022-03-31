@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 
+using ImageImporter.Application.Commands;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
@@ -17,10 +18,10 @@ IConfiguration Configuration = null;
 Host.CreateDefaultBuilder()
         .ConfigureAppConfiguration(Configure)
         .ConfigureServices(ConfigureServices)
-        .ConfigureServices(services => services.AddSingleton<Scheduler>())
+        .ConfigureServices(services => services.AddSingleton<ConsoleCommands>())
         .Build()
         .Services
-        .GetService<Scheduler>()?
+        .GetService<ConsoleCommands>()?
         .Execute();
 
 
@@ -35,12 +36,9 @@ void ConfigureServices(HostBuilderContext hostContext, IServiceCollection servic
     AppSettings settings = new AppSettings();
     Configuration.Bind(settings);
     services.AddSingleton(settings);
-
-
     services.AddDbContext<AppDBContext>(options=>
         options
         .UseMySQL(settings.ConnectionString)
         .UseLazyLoadingProxies());
-
 }
 

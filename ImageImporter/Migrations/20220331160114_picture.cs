@@ -14,8 +14,8 @@ namespace ImageImporter.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    HashA = table.Column<byte[]>(type: "varbinary(32)", maxLength: 32, nullable: false),
-                    HashD = table.Column<byte[]>(type: "varbinary(32)", maxLength: 32, nullable: false),
+                    HashA = table.Column<byte[]>(type: "varbinary(128)", maxLength: 128, nullable: false),
+                    HashD = table.Column<byte[]>(type: "varbinary(128)", maxLength: 128, nullable: false),
                     RelativePath = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>

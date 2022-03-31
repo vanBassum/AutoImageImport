@@ -24,13 +24,13 @@ namespace ImageImporter.Migrations
 
                     b.Property<byte[]>("HashA")
                         .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("varbinary(32)");
+                        .HasMaxLength(128)
+                        .HasColumnType("varbinary(128)");
 
                     b.Property<byte[]>("HashD")
                         .IsRequired()
-                        .HasMaxLength(32)
-                        .HasColumnType("varbinary(32)");
+                        .HasMaxLength(128)
+                        .HasColumnType("varbinary(128)");
 
                     b.Property<string>("RelativePath")
                         .HasColumnType("text");
