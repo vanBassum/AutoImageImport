@@ -33,7 +33,10 @@ connection.on("JobUpdate", function (message)
     obj.find("#lastExecution").text(data.LastExecution);
     obj.find("#nextExecution").text(data.NextExecution);
     obj.find("#duration").text(data.Duration);
-    obj.find("#progress").text(data.Progress);
+    var prog = obj.find(".progress-bar");
+    prog.attr('aria-valuenow', data.Progress);
+    prog.attr('style', 'width:' + data.Progress + '%');
+    prog.text(data.ProgressMessage);
 });
 
 $(function () {

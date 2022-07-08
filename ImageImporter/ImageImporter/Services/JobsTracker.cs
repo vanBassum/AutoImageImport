@@ -48,23 +48,19 @@ namespace ImageImporter.Services
             //Fetch info from quartz
             var scheduler = await factory.GetScheduler();
             var triggers = await scheduler.GetTriggersOfJob(info.Key);
-
-
-            if (triggers.Count == 1)
+            var triggerDetails = triggers.First();
+            if (triggerDetails != null)
             {
-                var triggerDetails = triggers.First();
-                var triggerState = scheduler.GetTriggerState(triggerDetails.Key);
-                var jobdetails = await scheduler.GetJobDetail(triggerDetails.JobKey);
+                //var jobdetails = await scheduler.GetJobDetail(triggerDetails.JobKey);
                 info.NextExecution = triggerDetails.GetNextFireTimeUtc()?.ToLocalTime().UtcDateTime;
                 info.LastExecution = triggerDetails.GetPreviousFireTimeUtc()?.ToLocalTime().UtcDateTime;
-                info.IsRunning = triggerState.Status == TaskStatus.Running;
                 info.Interval = info.NextExecution - info.LastExecution;
             }
         }
 
 
 
-        public async Task ReportJobProgress(JobKey key, TimeSpan duration, float progress)
+        public async Task ReportJobProgress(JobKey key, TimeSpan duration, float progress, string? progressMessage = null)
         {
             //Ensure jobinfo exists
             JobInfo info = Jobs[key];
@@ -77,9 +73,18 @@ namespace ImageImporter.Services
             info.Progress = progress;
             info.Duration = duration;
 
+            if (progressMessage != null)
+                info.ProgressMessage = progressMessage;
+
             string message = JsonSerializer.Serialize(new JobInfoViewModel( info));
             await hubContext.Clients.All.SendAsync("JobUpdate", message);
         }
+
+
+
+
+
+
 
         public async Task<List<JobInfo>> GetJobsInfo()
         {
@@ -126,6 +131,7 @@ namespace ImageImporter.Services
         public TimeSpan? Duration { get; set; }
         public DateTime? NextExecution { get; set; }
         public float? Progress { get; set; }
+        public string ProgressMessage { get; set; } = "Idle";
         public bool IsRunning { get; set; }
 
         public JobInfo(JobKey key)

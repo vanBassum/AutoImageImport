@@ -25,13 +25,14 @@ namespace ImageImporter.Jobs
         {
             Stopwatch sw = Stopwatch.StartNew();
             int i = 0;
+            await _jobsTracker.ReportJobProgress(context.JobDetail.Key, sw.Elapsed, 0f, "Running");
             while (i++ < 100)
             {
                 await _jobsTracker.ReportJobProgress(context.JobDetail.Key, sw.Elapsed, i / 100.0f );
                 Thread.Sleep(100);
             }
             sw.Stop();
-            await _jobsTracker.ReportJobProgress(context.JobDetail.Key, sw.Elapsed, 1f);
+            await _jobsTracker.ReportJobProgress(context.JobDetail.Key, sw.Elapsed, 0f, "Idle");
         }
     }
 }

@@ -34,13 +34,22 @@
 					<td id="lastExecution">@job.LastExecution</td>
 					<td id="duration">@job.Duration </td>
 					<td id="nextExecution">@job.NextExecution</td>
-					<td id="progress">@job.Progress     </td>
+					<td id="progress">
+						<div class="progress-bar" 
+								role="progressbar" 
+								style="width: @job.Progress%;" 
+								aria-valuenow="@job.Progress" 
+								aria-valuemin="0" 
+								aria-valuemax="100">
+								@job.ProgressMessage
+							</div>
+					</td>
 					<td id="button">
 						<button type="button" class="btn btn-default runJob" jobKey="@job.Name">
 							<span class="glyphicon glyphicon-repeat"></span>
 						</button>
+					</td>
 					</tr>
-					
 				}
 
 				</tbody>
