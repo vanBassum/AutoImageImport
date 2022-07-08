@@ -39,8 +39,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: |
-            ${{ steps.meta.outputs.tags }}
-            imageimporter:latest
-            imageimporter:${{ steps.date.outputs.date }}
+          tags: imageimporter:latest, imageimporter:${{ steps.date.outputs.date }}
           labels: ${{ steps.meta.outputs.labels }}
