@@ -1,21 +1,33 @@
 ﻿using ImageImporter.Models;
+using ImageImporter.Models.View;
+using ImageImporter.Services;
 using Microsoft.AspNetCore.Mvc;
+using Quartz;
+using Quartz.Impl.Matchers;
 using System.Diagnostics;
 
 namespace ImageImporter.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<HomeController> logger;
+        private readonly ISchedulerFactory factory;
+        private readonly JobsTracker jobsTracker;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ISchedulerFactory factory, ILogger<HomeController> logger, JobsTracker jobsTracker)
         {
-            _logger = logger;
+            this.factory = factory;
+            this.logger = logger;
+            this.jobsTracker = jobsTracker;
         }
 
-        public IActionResult Index()
+
+        public async Task<IActionResult> Index()
         {
-            return View();
+            IScheduler scheduler = await factory.GetScheduler();
+            var allTriggerKeys = await scheduler.GetTriggerKeys(GroupMatcher<TriggerKey>.AnyGroup());
+            IEnumerable<JobInfoViewModel> model = (await jobsTracker.GetJobsInfo()).Select(a=>new JobInfoViewModel(a));
+            return View(model);
         }
 
         public IActionResult Privacy()

@@ -23,14 +23,33 @@ connection.onclose(async () => {
 
 start();
 
-connection.on("ConcurrentJobs", function (message) {
-    var li = document.createElement("li");
-    document.getElementById("concurrentJobs").appendChild(li);
-    li.textContent = `${message}`;
+
+connection.on("JobUpdate", function (message)
+{
+    var data = JSON.parse(message);
+    var obj = $("#" + data.Name);
+
+    obj.find("#interval").text(data.Interval);
+    obj.find("#lastExecution").text(data.LastExecution);
+    obj.find("#nextExecution").text(data.NextExecution);
+    obj.find("#duration").text(data.Duration);
+    obj.find("#progress").text(data.Progress);
 });
 
-connection.on("NonConcurrentJobs", function (message) {
-    var li = document.createElement("li");
-    document.getElementById("nonConcurrentJobs").appendChild(li);
-    li.textContent = `${message}`;
+$(function () {
+    $(this).find("*.runJob").each(function (index, value) {
+        var obj = $(this);
+
+        obj.click(function (e) {
+            var name = obj.attr('jobKey');
+            connection.send("RunJob", name).catch(function (err) {
+                return console.error(err.toString());
+            });
+        });
+
+        
+    });
+
 });
+
+

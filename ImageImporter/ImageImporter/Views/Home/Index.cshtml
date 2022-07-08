@@ -1,4 +1,8 @@
-﻿@{
+﻿@using ImageImporter.Models.View
+@model IEnumerable<JobInfoViewModel>
+
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -6,12 +10,42 @@
  
 <div class="container">
     <div class="row">
-        <div class="col-6">
-            <ul id="concurrentJobs"></ul>
-        </div>
-         <div class="col-6">
-            <ul id="nonConcurrentJobs"></ul>
-        </div>
+        <fieldset>
+            <legend class="FieldSet-legend-2KHms">Scheduled</legend>
+            <table class="Table-table-1Ion0">
+	            <thead><tr>
+	                <th class="">Name</th>
+	                <th class="">Interval</th>
+	                <th class="">Last Execution</th>
+	                <th class="">Last Duration</th>
+	                <th class="">Next Execution</th>
+	                <th class="">Progress</th>
+					<th class=""></th>
+	            </tr></thead>
+
+                <tbody>
+					
+                @foreach(var job in Model)
+				{
+					
+					<tr id="@job.Name">
+					<td id="name">@job.Name     </td>
+					<td id="interval">@job.Interval     </td>
+					<td id="lastExecution">@job.LastExecution</td>
+					<td id="duration">@job.Duration </td>
+					<td id="nextExecution">@job.NextExecution</td>
+					<td id="progress">@job.Progress     </td>
+					<td id="button">
+						<button type="button" class="btn btn-default runJob" jobKey="@job.Name">
+							<span class="glyphicon glyphicon-repeat"></span>
+						</button>
+					</tr>
+					
+				}
+
+				</tbody>
+            </table>
+        </fieldset>
     </div>
 </div>
  

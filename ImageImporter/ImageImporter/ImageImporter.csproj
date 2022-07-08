@@ -30,6 +30,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Folder Include="Models\Db\" />
 	  <Folder Include="wwwroot\lib\microsoft-signalr\" />
 	</ItemGroup>
 
