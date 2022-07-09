@@ -31,8 +31,8 @@ namespace ImageImporter.Jobs
         {
             Stopwatch sw = Stopwatch.StartNew();
             await JobsTracker.ReportJobProgress(context.JobDetail.Key, sw.Elapsed, 0f, "Searching files");
-            Directory.CreateDirectory(Settings.ImportFolder);
-            var files = Directory.GetFiles(Settings.ImportFolder, "*", SearchOption.AllDirectories);
+            Directory.CreateDirectory(Settings.ImageImportFolder);
+            var files = Directory.GetFiles(Settings.ImageImportFolder, "*", SearchOption.AllDirectories);
             int count = files.Length;
             FileImporter importer = new FileImporter(Settings, Context);
             for (int i=0; i<count; i++)

@@ -8,6 +8,7 @@ namespace ImageImporter.Data
     public class ApplicationDbContext : IdentityDbContext
     {
         public DbSet<Setting> Settings { get; set; }
+        public DbSet<Picture> Pictures { get; set; }
 
 
         public ApplicationDbContext()

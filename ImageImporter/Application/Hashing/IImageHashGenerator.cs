@@ -4,7 +4,7 @@
     {
         int HashWidth { get; set; }
         int HashHeight { get; set; }
-        byte[] Generate(string filename);
+        Task<byte[]> Generate(string filename);
     }
 
 

@@ -11,4 +11,5 @@ namespace ImageImporter.Models.Db
         public string? Value { get; set; }
 
     }
+
 }

@@ -8,7 +8,8 @@ namespace ImageImporter.Services
         {
         }
 
-        public string ImportFolder { get => GetPar("wwwroot/mount/import/"); set => SetPar(value); }
+        public string ImageImportFolder { get => GetPar("wwwroot/mount/import/"); set => SetPar(value); }
+        public string ImageExportFolder { get => GetPar("wwwroot/mount/export/"); set => SetPar(value); }
 
         public int ImageHashWidth { get => GetPar(32); set => SetPar(value); }
         public int ImageHashHeight { get => GetPar(32); set => SetPar(value); }

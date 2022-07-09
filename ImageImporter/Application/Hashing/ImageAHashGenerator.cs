@@ -8,7 +8,13 @@ namespace ImageImporter.Application.Hashing
     {
         public int HashWidth { get; set; } = 32;
         public int HashHeight { get; set; } = 32;
-        public byte[] Generate(string filename)
+
+        public async Task<byte[]> Generate(string filename)
+        {
+            return await Task.Run(() => GenerateSync(filename));
+        }
+
+        byte[] GenerateSync(string filename)
         {
             List<byte> data = new List<byte>();
 

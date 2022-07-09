@@ -3,16 +3,19 @@
     public class ImportResult
     {
         public bool Success { get; set; } = false;
-        public ImportError Error { get; set; } = ImportError.Unknown;
-
+        public ImportStatus Status { get; set; } = ImportStatus.Unknown;
+        public Exception? Exception { get; set; }
     }
 
 
-    public enum ImportError
+    public enum ImportStatus
     { 
         Unknown = 0,
         IncorrectFileType = 1,
         HashingAlgorithmUndetermined = 2,
+        ImportedUniqueFile = 3,
+        ExceptionThrown = 4,
+        ImportedUniqueFileWithRename = 5,
     }
 
 
