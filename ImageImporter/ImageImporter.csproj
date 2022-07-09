@@ -30,8 +30,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Models\Db\" />
 	  <Folder Include="wwwroot\lib\microsoft-signalr\" />
+	  <Folder Include="wwwroot\mount\" />
 	</ItemGroup>
 
 </Project>

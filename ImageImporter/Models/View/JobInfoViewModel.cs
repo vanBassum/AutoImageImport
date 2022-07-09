@@ -1,4 +1,5 @@
 ﻿using ImageImporter.Services;
+using ImageImporter.Services.JobTracker;
 
 namespace ImageImporter.Models.View
 {

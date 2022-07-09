@@ -1,6 +1,7 @@
 ﻿using ImageImporter.Models;
 using ImageImporter.Models.View;
 using ImageImporter.Services;
+using ImageImporter.Services.JobTracker;
 using Microsoft.AspNetCore.Mvc;
 using Quartz;
 using Quartz.Impl.Matchers;

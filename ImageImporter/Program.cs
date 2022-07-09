@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Quartz;
 using ImageImporter.Services;
+using DB4045.Data.Seeds;
+using ImageImporter.Services.JobTracker;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,10 +24,11 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSignalR();
 
 builder.Services.AddSingleton<JobsTracker>();
+builder.Services.AddScoped<Settings>();
 
 builder.Services.AddQuartz(quartz => { 
     quartz.UseMicrosoftDependencyInjectionJobFactory();
-    quartz.AddJob<ImportImagesJob>(x => x
+    quartz.AddJob<ImportingJob>(x => x
         .WithIntervalInSeconds(120)
         .RepeatForever());
 });
@@ -71,6 +74,11 @@ using (var scope = app.Services.CreateScope())
 {
     var dataContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     dataContext.Database.Migrate();
+
+    var seeders = new List<ISeeder> {};
+
+    foreach (var seeder in seeders)
+        seeder.Execute();
 }
 
 app.Run();
