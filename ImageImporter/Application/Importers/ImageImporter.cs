@@ -103,52 +103,70 @@ namespace ImageImporter.Application.Importers
                 }
                 else
                 {
-                    if(Settings.ImageRecycleMatches)
-                    {
-                        var dst = Path.Combine(Settings.ImageRecycleFolder, relPath);
-
-                        if(File.Exists(dst))
-                        {
-                            //TODO: Keep best quality
-                            dst = ImporterHelpers.RenameDuplicates(dst);
-                            KeepBestQuality(source, dst);
-                            result.Status = ImportStatus.MatchingDuplicateRecycledAndRenamedSource;
-                            result.Success = true;
-                        }
-                        else
-                        {
-                            //TODO: Keep best quality
-                            KeepBestQuality(source, dst);
-                            result.Status = ImportStatus.MatchingDuplicateRecycledSource;
-                            result.Success = true;
-                        }
-                    }
-                    else
-                    {
-                        //TODO: Keep best quality
-                        KeepBestQuality(source, dst);
-                        result.Status = ImportStatus.MatchingDuplicateDeletedSource;
-                        result.Success = true;
-                    }
+                    result = ImportSameFileLogic(source, destination);
                 }
             }
             return result;
         }
 
-        void KeepBestQuality(string source, string destination)
+
+
+        ImportResult ImportSameFileLogic(string source, string destination)
+        {
+            ImportResult result = new ImportResult();
+
+
+
+            if (CheckIfSourceIsBetter(source, destination))
+            {
+                //Keep source
+            }
+
+
+
+            return result;
+        }
+
+        void DeleteFile(string file, string relPath)
+        {
+            if (Settings.ImageRecycleMatches)
+            {
+                var recyleDestination = Path.Combine(Settings.ImageRecycleFolder, relPath);
+
+
+
+                //if (File.Exists(destination))
+                //{
+                //    //destination = ImporterHelpers.RenameDuplicates(destination);
+                //    //KeepBestQuality(source, destination);
+                //    //result.Status = ImportStatus.MatchingDuplicateRecycledAndRenamedSource;
+                //    //result.Success = true;
+                //}
+                //else
+                //{
+                //    if (CheckIfSourceIsBetter(source, destination))
+                //    {
+                //        //File.Delete(destination);
+                //        //File.Move(source, destination);
+                //        //result.Status = ImportStatus.MatchingDuplicateKeptSource;
+                //        //result.Success = true;
+                //    }
+                //    else
+                //    {
+                //        //MoveFile(source, destination);
+                //        //result.Status = ImportStatus.MatchingDuplicateRecycledSource;
+                //        //result.Success = true;
+                //    }
+                //}
+            }
+        }
+
+
+        bool CheckIfSourceIsBetter(string source, string destination)
         {
             var infoSource = new FileInfo(source);
             var infoDestination = new FileInfo(destination);
-
-            if(infoSource.Length <= infoDestination.Length)
-            {
-                infoSource.Delete();
-            }
-            else
-            {
-                infoDestination.Delete();
-                MoveFile(source, destination);
-            }
+            return infoSource.Length > infoDestination.Length;
         }
 
 

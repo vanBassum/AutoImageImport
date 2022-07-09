@@ -20,6 +20,7 @@
         MatchingDuplicateDeletedSource = 7,
         MatchingDuplicateRecycledSource = 8,
         MatchingDuplicateRecycledAndRenamedSource = 9,
+        MatchingDuplicateKeptSource = 10,
     }
 
 
