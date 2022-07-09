@@ -2,7 +2,7 @@
 {
     public interface IImporter
     {
-        Task<ImportResult> ImportFile(FileInfo file);
+        Task<ImportResult> ImportFile(string file);
     }
 
 }

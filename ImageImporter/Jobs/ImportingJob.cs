@@ -39,7 +39,7 @@ namespace ImageImporter.Jobs
             {
                 await JobsTracker.ReportJobProgress(context.JobDetail.Key, sw.Elapsed, (float)i / (float)count);
                 var file = files[i];
-                var result = await importer.ImportFile(new FileInfo(file));
+                var result = await importer.ImportFile(file);
 
                 //TODO: Do something with this result!!!
 

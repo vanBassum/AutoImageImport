@@ -17,7 +17,7 @@ namespace ImageImporter.Application.Importers
         }
 
 
-        public async Task<ImportResult> ImportFile(FileInfo file)
+        public async Task<ImportResult> ImportFile(string file)
         {
             ImportResult result = new ImportResult();
 

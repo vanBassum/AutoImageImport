@@ -18,7 +18,7 @@ namespace ImageImporter.Services
 
         public void SetPar<T>(T value, [CallerMemberName] string propertyName = null)
         {
-            Setting setting = Context.Settings.Where(a => a.Name == propertyName).First();
+            Setting setting = Context.Settings.Where(a => a.Name == propertyName).FirstOrDefault();
             if (setting == null)
             {
                 setting = new Setting();
@@ -35,13 +35,14 @@ namespace ImageImporter.Services
         {
             try
             {
-                Setting setting = Context.Settings.Where(a => a.Name == propertyName).First();
+                Setting setting = Context.Settings.Where(a => a.Name == propertyName).FirstOrDefault();
                 if (setting == null)
                 {
                     setting = new Setting();
                     setting.Name = propertyName;
                     setting.Value = JsonSerializer.Serialize(defVal);
                     Context.Settings.Add(setting);                      //This ensures all settings are stored in db for easy modification
+                    Context.SaveChanges(true);
                     return defVal;
                 }
                 return JsonSerializer.Deserialize<T>(setting.Value);

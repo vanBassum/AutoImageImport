@@ -17,10 +17,10 @@ namespace ImageImporter.Application.Importers
             Context = context;
         }
 
-        public async Task<ImportResult> ImportFile(FileInfo file)
+        public async Task<ImportResult> ImportFile(string source)
         {
             ImportResult result = new ImportResult();
-            IImageInfo imageInfo = Image.Identify(file.FullName);
+            IImageInfo imageInfo = Image.Identify(source);
 
             if (imageInfo != null)
             {
@@ -40,10 +40,10 @@ namespace ImageImporter.Application.Importers
                 {
                     hashGenerator.HashWidth = Settings.ImageHashWidth;
                     hashGenerator.HashHeight = Settings.ImageHashHeight;
-                    var hash = await hashGenerator.Generate(file.FullName);
+                    var hash = await hashGenerator.Generate(source);
                     try
                     {
-                        result = ImportLogic(file.FullName, hash);
+                        result = ImportLogic(source, hash);
                     }
                     catch (Exception ex)
                     {
@@ -109,21 +109,24 @@ namespace ImageImporter.Application.Importers
 
                         if(File.Exists(dst))
                         {
+                            //TODO: Keep best quality
                             dst = ImporterHelpers.RenameDuplicates(dst);
-                            MoveFile(source, dst);
+                            KeepBestQuality(source, dst);
                             result.Status = ImportStatus.MatchingDuplicateRecycledAndRenamedSource;
                             result.Success = true;
                         }
                         else
                         {
-                            MoveFile(source, dst);
+                            //TODO: Keep best quality
+                            KeepBestQuality(source, dst);
                             result.Status = ImportStatus.MatchingDuplicateRecycledSource;
                             result.Success = true;
                         }
                     }
                     else
                     {
-                        File.Delete(source);
+                        //TODO: Keep best quality
+                        KeepBestQuality(source, dst);
                         result.Status = ImportStatus.MatchingDuplicateDeletedSource;
                         result.Success = true;
                     }
@@ -131,6 +134,23 @@ namespace ImageImporter.Application.Importers
             }
             return result;
         }
+
+        void KeepBestQuality(string source, string destination)
+        {
+            var infoSource = new FileInfo(source);
+            var infoDestination = new FileInfo(destination);
+
+            if(infoSource.Length <= infoDestination.Length)
+            {
+                infoSource.Delete();
+            }
+            else
+            {
+                infoDestination.Delete();
+                MoveFile(source, destination);
+            }
+        }
+
 
         void MoveFile(string source, string destination)
         {
@@ -172,7 +192,7 @@ namespace ImageImporter.Application.Importers
                 else
                     fileName += "(1)";
 
-                file = Path.Combine(path, file + extention);
+                file = Path.Combine(path, fileName + extention);
             }
             return file;
         }
