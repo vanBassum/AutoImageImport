@@ -16,6 +16,10 @@
         ImportedUniqueFile = 3,
         ExceptionThrown = 4,
         ImportedUniqueFileWithRename = 5,
+        ExactDuplicateDeletedSource = 6,
+        MatchingDuplicateDeletedSource = 7,
+        MatchingDuplicateRecycledSource = 8,
+        MatchingDuplicateRecycledAndRenamedSource = 9,
     }
 
 

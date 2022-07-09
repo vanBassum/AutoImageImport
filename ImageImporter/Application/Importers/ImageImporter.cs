@@ -43,7 +43,7 @@ namespace ImageImporter.Application.Importers
                     var hash = await hashGenerator.Generate(file.FullName);
                     try
                     {
-                        result = ImportLogic(file, hash);
+                        result = ImportLogic(file.FullName, hash);
                     }
                     catch (Exception ex)
                     {
@@ -67,45 +67,81 @@ namespace ImageImporter.Application.Importers
         }
 
 
-        ImportResult ImportLogic(FileInfo file, byte[]? hash)
+        ImportResult ImportLogic(string source, byte[]? hash)
         {
             ImportResult result = new ImportResult();
+
+            var relPath = Path.GetRelativePath(Settings.ImageImportFolder, source);
+            var destination = Path.Combine(Settings.ImageExportFolder, relPath);
 
             var match = Context.Pictures.FirstOrDefault(a => a.Hash == hash);
             if (match == null)
             {
-                var relPath = Path.GetRelativePath(Settings.ImageImportFolder, file.FullName);
-                var destination = Path.Combine(Settings.ImageExportFolder, relPath);
-
                 if (File.Exists(destination))
                 {
                     destination = ImporterHelpers.RenameDuplicates(destination);
                     relPath = Path.GetRelativePath(Settings.ImageExportFolder, destination);
-                    DoImport(file.FullName, destination, relPath, hash);
+                    DoImport(source, destination, relPath, hash);
                     result.Status = ImportStatus.ImportedUniqueFileWithRename;
                     result.Success = true;
                 }
                 else
                 {
-                    DoImport(file.FullName, destination, relPath, hash);
+                    DoImport(source, destination, relPath, hash);
                     result.Status = ImportStatus.ImportedUniqueFile;
                     result.Success = true;
                 }
             }
             else
             {
-                //TODO full image comparison, keep best quality, remove duplicates (setting?)
-            }
+                var matchFile = Path.Combine(Settings.ImageExportFolder, match.Path);
+                if (ImporterHelpers.FileEquals(source, matchFile))
+                {
+                    File.Delete(source);
+                    result.Status = ImportStatus.ExactDuplicateDeletedSource;
+                    result.Success = true;
+                }
+                else
+                {
+                    if(Settings.ImageRecycleMatches)
+                    {
+                        var dst = Path.Combine(Settings.ImageRecycleFolder, relPath);
 
+                        if(File.Exists(dst))
+                        {
+                            dst = ImporterHelpers.RenameDuplicates(dst);
+                            MoveFile(source, dst);
+                            result.Status = ImportStatus.MatchingDuplicateRecycledAndRenamedSource;
+                            result.Success = true;
+                        }
+                        else
+                        {
+                            MoveFile(source, dst);
+                            result.Status = ImportStatus.MatchingDuplicateRecycledSource;
+                            result.Success = true;
+                        }
+                    }
+                    else
+                    {
+                        File.Delete(source);
+                        result.Status = ImportStatus.MatchingDuplicateDeletedSource;
+                        result.Success = true;
+                    }
+                }
+            }
             return result;
         }
 
+        void MoveFile(string source, string destination)
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(destination));
+            File.Move(source, destination);
+        }
 
 
         void DoImport(string source, string destination, string relPath, byte[]? hash)
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(destination));
-            File.Move(source, destination);
+            MoveFile(source, destination);
             Picture picture = new Picture();
             picture.Path = relPath;
             picture.Hash = hash;
@@ -140,7 +176,39 @@ namespace ImageImporter.Application.Importers
             }
             return file;
         }
-    
+
+        //https://stackoverflow.com/questions/968935/compare-binary-files-in-c-sharp
+        public static bool FileEquals(string fileName1, string fileName2)
+        {
+            // Check the file size and CRC equality here.. if they are equal...    
+            using (var file1 = new FileStream(fileName1, FileMode.Open))
+            using (var file2 = new FileStream(fileName2, FileMode.Open))
+                return FileStreamEquals(file1, file2);
+        }
+
+        static bool FileStreamEquals(Stream stream1, Stream stream2)
+        {
+            const int bufferSize = 2048;
+            byte[] buffer1 = new byte[bufferSize]; //buffer size
+            byte[] buffer2 = new byte[bufferSize];
+            while (true)
+            {
+                int count1 = stream1.Read(buffer1, 0, bufferSize);
+                int count2 = stream2.Read(buffer2, 0, bufferSize);
+
+                if (count1 != count2)
+                    return true;
+
+                if (count1 == 0 && count2 == 0)
+                    return true;
+
+                if (!buffer1.SequenceEqual(buffer2))
+                    return false;
+
+
+            }
+        }
+
     }
 
 
