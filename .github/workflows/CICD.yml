@@ -39,13 +39,13 @@ jobs:
         
       - name: GetShortSha
         id: shortsha
-        run: run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+        run: echo ${GITHUB_SHA::7}
   
       - name: Build and push
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}, ${{ secrets.DOCKERHUB_USERNAME }}/imageimporter:latest, ${{ secrets.DOCKERHUB_USERNAME }}/${{steps.vars.outputs.sha_short}}
+          tags: ${{ steps.meta.outputs.tags }}, ${{ secrets.DOCKERHUB_USERNAME }}/imageimporter:latest, ${{ secrets.DOCKERHUB_USERNAME }}/${{shortsha.output}}
           labels: ${{ steps.meta.outputs.labels }}
           
