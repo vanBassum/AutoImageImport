@@ -63,7 +63,7 @@ namespace ImageImporter.Application.Importers
 
         protected override async Task<string?> FindExistingByHash(byte[] hash)
         {
-            var match = Context.Pictures.FirstOrDefault(a => a.Hash == hash);
+            var match = Context.Pictures.FirstOrDefault(a => a.Hash.SequenceEqual(hash));
             return match?.Path;
         }
 

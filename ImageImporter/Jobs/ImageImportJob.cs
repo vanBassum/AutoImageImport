@@ -20,6 +20,8 @@ namespace ImageImporter.Jobs
         private JobsTracker JobsTracker { get; }
         private Settings Settings { get; }
         private ApplicationDbContext Context { get; }
+        private static string[] IgnoreExtentions => new string[] { ".db", ".db@SynoEAStream" };
+
         public ImageImportJob(ILogger<ImageImportJob> logger, JobsTracker jobsTracker, Settings settings, ApplicationDbContext context )
         {
             Logger = logger;
@@ -37,22 +39,26 @@ namespace ImageImporter.Jobs
             var files = Directory.GetFiles(Settings.ImageImportFolder, "*", SearchOption.AllDirectories);
             int count = files.Length;
             FileImporter importer = new FileImporter(Settings, Context);
+            await JobsTracker.ReportJobProgress(context.JobDetail.Key, sw.Elapsed, 0f, "Importing files");
             for (int i=0; i<count; i++)
             {
-                await JobsTracker.ReportJobProgress(context.JobDetail.Key, sw.Elapsed, (float)i / (float)count);
-                ImportResult result = new ImportResult();
-                result.JobStartTime = jobStartTime;
-                await importer.ImportFile(files[i], result);
-                Context.Add(result);
-                try
+                var extention = Path.GetExtension(files[i]);
+                if(!IgnoreExtentions.Contains(extention))
                 {
-                    await Context.SaveChangesAsync();
-                }
-                catch (Exception ex)
-                {
+                    await JobsTracker.ReportJobProgress(context.JobDetail.Key, sw.Elapsed, (float)i / (float)count);
+                    ImportResult result = new ImportResult();
+                    result.JobStartTime = jobStartTime;
+                    await importer.ImportFile(files[i], result);
+                    Context.Add(result);
+                    try
+                    {
+                        await Context.SaveChangesAsync();
+                    }
+                    catch (Exception ex)
+                    {
 
-                }
-                
+                    }
+                }    
             }
 
             sw.Stop();

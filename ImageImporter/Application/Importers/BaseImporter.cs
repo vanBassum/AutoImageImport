@@ -45,8 +45,8 @@ namespace ImageImporter.Application.Importers
                 if (existing == null)
                 {
                     destination = RenameUntillUnique(destination);
-                    Directory.CreateDirectory(Path.GetDirectoryName(destination));
-                    File.Move(source, destination);
+                    MoveFile(source, destination);
+                    result.RelativePath = Path.GetRelativePath(ExportFolder, destination);
                     result.SetResult(true, ImportStatus.ImportedUniqueFile);
                     await AfterImport(result);
                 }
