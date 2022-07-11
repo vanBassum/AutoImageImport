@@ -1,5 +1,6 @@
 ﻿using ImageImporter.Models.Enums;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ImageImporter.Models.Db
 {
@@ -14,7 +15,9 @@ namespace ImageImporter.Models.Db
         public byte[]? Hash { get; set; }
         public DateTime? Timestamp { get; set; }
         public DateTime? JobStartTime { get; set; }
-
+        public string? RemovedFileThumb { get; set; }
+        public ImporterTypes ImporterType { get; set; } = ImporterTypes.Unknown;
+        public int? MatchedWithId { get; set; }
         public ImportResult()
         {
             Success = false;

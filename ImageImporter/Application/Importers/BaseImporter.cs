@@ -12,10 +12,10 @@ namespace ImageImporter.Application.Importers
         protected abstract bool UseRecycleFolder { get; }
         protected abstract Task<bool> CheckFile(string source);
         protected abstract Task<byte[]?> CalculateHash(string source);
-        protected abstract Task<string?> FindExistingByHash(byte[] hash);
+        protected abstract Task<(int Id, string File)?> FindExistingByHash(byte[] hash);
         protected abstract Task<bool?> CheckIfSourceIsBetter(string source, string destination);
         protected virtual async Task AfterImport(ImportResult import) { return; }
-
+        protected virtual async Task<string?> CreateThumbnail(string file) { return null; }
 
 
         public async Task ImportFile(string source, ImportResult result)
@@ -40,9 +40,10 @@ namespace ImageImporter.Application.Importers
                 result.Hash = hash;
 
                 string destination = Path.Combine(ExportFolder, relPath);
-                string? existing = await FindExistingByHash(hash);
+                var existingObj = await FindExistingByHash(hash);
+                
 
-                if (existing == null)
+                if (existingObj == null)
                 {
                     destination = RenameUntillUnique(destination);
                     MoveFile(source, destination);
@@ -52,6 +53,8 @@ namespace ImageImporter.Application.Importers
                 }
                 else
                 {
+                    string existing = existingObj.Value.File;
+                    result.MatchedWithId = existingObj.Value.Id;
                     existing = Path.Combine(ExportFolder, existing);
                     var sourceIsBetter = await CheckIfSourceIsBetter(source, existing);
                     if (!sourceIsBetter.HasValue)
@@ -62,14 +65,14 @@ namespace ImageImporter.Application.Importers
                     {
                         if (sourceIsBetter.Value)
                         {
-                            DeleteFile(existing);
+                            DeleteFile(existing, result);
                             MoveFile(source, existing);
                             result.SetResult(true, ImportStatus.HashMatchKeptSource);
                             await AfterImport(result);
                         }
                         else
                         {
-                            DeleteFile(source);
+                            DeleteFile(source, result);
                             result.SetResult(false, ImportStatus.HashMatchDeletedSource);
                         }
                     }
@@ -88,9 +91,10 @@ namespace ImageImporter.Application.Importers
             File.Move(source, destination);
         }
 
-        public void DeleteFile(string file)
+        public async void DeleteFile(string file, ImportResult result)
         {
-            if(UseRecycleFolder)
+            result.RemovedFileThumb = await CreateThumbnail(file);
+            if (UseRecycleFolder)
             {
                 string relPath = Path.GetRelativePath(ImportFolder, file);
                 string destination = Path.Combine(RecylceFolder, relPath);

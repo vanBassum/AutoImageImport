@@ -1,0 +1,45 @@
+﻿@using ImageImporter.Models.View
+@model IEnumerable<ImportResultViewModel>
+
+
+@{
+    ViewData["Title"] = "History";
+}
+
+
+ 
+<div class="container">
+    <div class="row">
+        <fieldset>
+            <legend class="FieldSet-legend-2KHms">History</legend>
+            <table class="Table-table-1Ion0">
+	            <thead><tr>
+                    <th>Timestamp </th>
+                    <th>Status </th>
+                    <th>Hash </th>
+                    <th>RelativePath</th>
+                    <th></th>
+	            </tr></thead>
+
+                <tbody>
+					
+                @foreach(var item in Model)
+				{
+					
+					<tr id="@item.Id">
+                        <td id="Timestamp ">@item.Timestamp </td>
+                        <td id="Status ">@item.Status </td>
+                        <td id="Hash ">@item.Hash </td>
+                        <td id="RelativePath">@item.RelativePath</td>
+                        <td id="Image"><img id="sample-img" src="@item.Thumb"/><img id="sample-img" src="@item.RemovedThumb"/></td>
+					</tr>
+				}
+
+				</tbody>
+            </table>
+        </fieldset>
+    </div>
+</div>
+
+
+<script src="~/lib/microsoft-signalr/signalr.js"></script>

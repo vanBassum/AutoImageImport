@@ -11,5 +11,4 @@
         HashMatchKeptSource = 11,
         HashMatchDeletedSource = 12,
     }
-
 }

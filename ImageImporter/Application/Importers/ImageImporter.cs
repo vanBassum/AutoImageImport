@@ -5,6 +5,9 @@ using ImageImporter.Models.Db;
 using ImageImporter.Models.Enums;
 using ImageImporter.Services;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Png;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp.Processing;
 using System.Text.RegularExpressions;
 
 namespace ImageImporter.Application.Importers
@@ -56,10 +59,18 @@ namespace ImageImporter.Application.Importers
             return await hashGenerator.Generate(source);
         }
 
-        protected override async Task<string?> FindExistingByHash(byte[] hash)
+        protected override async Task<(int Id, string File)?> FindExistingByHash(byte[] hash)
         {
+            (int Id, string File) result;
             var match = Context.Pictures.FirstOrDefault(a => a.Hash.SequenceEqual(hash));
-            return match?.Path;
+            if (match != null)
+            {
+                result.Id = match.Id;
+                result.File = match.Path;
+                return result;
+            }
+
+            return null;
         }
 
         protected override async Task<bool?> CheckIfSourceIsBetter(string source, string destination)
@@ -92,20 +103,31 @@ namespace ImageImporter.Application.Importers
             if (!import.Success)
                 return import;
 
-            switch(import.Status)
+            Picture picture;
+            switch (import.Status)
             {
                 case ImportStatus.ImportedUniqueFile:
-                    Picture picture = new Picture();
+                    picture = new Picture();
                     picture.Path = import.RelativePath;
                     picture.Hash = import.Hash;
+                    picture.Thumbnail = await CreateThumbnail(Path.Combine(ExportFolder, import.RelativePath));
                     Context.Add(picture);
                     break;
 
                 case ImportStatus.HashMatchKeptSource:
+                    picture = await Context.Pictures.FindAsync(import.Id);
+                    picture.Thumbnail = await CreateThumbnail(Path.Combine(ExportFolder, import.RelativePath));
                     break;
             }
-
+            
             return import;
+        }
+
+        protected override async Task<string?> CreateThumbnail(string file)
+        {
+            using var image = Image.Load<Rgba32>(file);
+            image.Mutate(x => x.Resize(Settings.ImageThumbnailSize));
+            return image.ToBase64String(PngFormat.Instance);
         }
 
     }

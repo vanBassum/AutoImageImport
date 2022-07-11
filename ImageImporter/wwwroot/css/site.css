@@ -26,29 +26,34 @@ table {
     padding: 0;
     width: 100%;
     table-layout: fixed;
+    table-layout: auto !important;
 }
 
     table caption {
         font-size: 1.5em;
         margin: .5em 0 .75em;
+        width: auto !important;
     }
 
     table tr {
         background-color: #f8f8f8;
         border: 1px solid #ddd;
         padding: .35em;
+        width: auto !important;
     }
 
     table th,
     table td {
         padding: .625em;
         text-align: center;
+        width: auto !important;
     }
 
     table th {
         font-size: .85em;
         letter-spacing: .1em;
         text-transform: uppercase;
+        width: auto !important;
     }
 
 @media screen and (max-width: 600px) {
