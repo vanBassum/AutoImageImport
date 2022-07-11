@@ -14,10 +14,8 @@ namespace ImageImporter.Services
         public string ImageRecycleFolder { get => GetPar("wwwroot/mount/recycle/"); set => SetPar(value); }
 
         public bool ImageUseRecycleFolder { get => GetPar(true); set => SetPar(value); }
-        public int ImageHashWidth { get => GetPar(20); set => SetPar(value); }
-        public int ImageHashHeight { get => GetPar(20); set => SetPar(value); }
         public ImageQualityCompareMethods ImageQualityCompareMethod { get => GetPar(ImageQualityCompareMethods.Resolution); set => SetPar(value); }
-        public ImageHashingAlgorithms ImageHashingAlgorithm { get => GetPar(ImageHashingAlgorithms.AHashing); set => SetPar(value); }
+        public ImageHashingAlgorithms ImageHashingAlgorithm { get => GetPar(ImageHashingAlgorithms.PHashing); set => SetPar(value); }
     }
 
 

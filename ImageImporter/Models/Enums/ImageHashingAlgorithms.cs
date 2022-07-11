@@ -4,6 +4,7 @@
     {
         AHashing = 0,
         DHashing = 1,
+        PHashing = 2,
     }
 
 }

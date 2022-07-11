@@ -40,18 +40,13 @@ namespace ImageImporter.Application.Importers
             switch (Settings.ImageHashingAlgorithm)
             {
                 case ImageHashingAlgorithms.AHashing:
-                    hashGenerator = new ImageAHashGenerator()
-                    {
-                        HashWidth = Settings.ImageHashWidth,
-                        HashHeight = Settings.ImageHashHeight,
-                    };
+                    hashGenerator = new ImageAHashGenerator();
                     break;
                 case ImageHashingAlgorithms.DHashing:
-                    hashGenerator = new ImageDHashGenerator()
-                    {
-                        HashWidth = Settings.ImageHashWidth,
-                        HashHeight = Settings.ImageHashHeight,
-                    };
+                    hashGenerator = new ImageDHashGenerator();
+                    break;
+                case ImageHashingAlgorithms.PHashing:
+                    hashGenerator = new ImagePHashGenerator();
                     break;
             }
 

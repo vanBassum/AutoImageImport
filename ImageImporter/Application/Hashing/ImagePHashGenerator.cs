@@ -4,7 +4,7 @@ using SixLabors.ImageSharp.PixelFormats;
 
 namespace ImageImporter.Application.Hashing
 {
-    public class ImageDHashGenerator : IHashGenerator
+    public class ImagePHashGenerator : IHashGenerator
     {
         public async Task<byte[]?> Generate(string filename)
         {
@@ -13,7 +13,7 @@ namespace ImageImporter.Application.Hashing
 
         byte[] GenerateSync(string filename)
         {
-            var hashAlgorithm = new DifferenceHash();
+            var hashAlgorithm = new PerceptualHash();
             using var image = Image.Load<Rgba32>(filename);
             return BitConverter.GetBytes(hashAlgorithm.Hash(image));
         }
