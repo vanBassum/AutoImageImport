@@ -3,14 +3,16 @@ using System;
 using ImageImporter.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace ImageImporter.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220711111807_AddImportResult")]
+    partial class AddImportResult
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -27,12 +29,14 @@ namespace ImageImporter.Migrations
                         .HasColumnType("text");
 
                     b.Property<byte[]>("Hash")
+                        .IsRequired()
                         .HasColumnType("varbinary(4000)");
 
-                    b.Property<DateTime?>("JobStartTime")
+                    b.Property<DateTime>("JobStartTime")
                         .HasColumnType("datetime");
 
                     b.Property<string>("RelativePath")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Status")
@@ -41,7 +45,7 @@ namespace ImageImporter.Migrations
                     b.Property<bool>("Success")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<DateTime?>("Timestamp")
+                    b.Property<DateTime>("Timestamp")
                         .HasColumnType("datetime");
 
                     b.HasKey("Id");

@@ -28,7 +28,7 @@ builder.Services.AddScoped<Settings>();
 
 builder.Services.AddQuartz(quartz => { 
     quartz.UseMicrosoftDependencyInjectionJobFactory();
-    quartz.AddJob<ImportingJob>(x => x
+    quartz.AddJob<ImageImportJob>(x => x
         .WithIntervalInSeconds(120)
         .RepeatForever());
 });

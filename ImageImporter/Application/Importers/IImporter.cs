@@ -1,8 +1,10 @@
-﻿namespace ImageImporter.Application.Importers
+﻿using ImageImporter.Models.Db;
+
+namespace ImageImporter.Application.Importers
 {
     public interface IImporter
     {
-        Task<ImportResult> ImportFile(string file);
+        Task ImportFile(string file, ImportResult result);
     }
 
 }

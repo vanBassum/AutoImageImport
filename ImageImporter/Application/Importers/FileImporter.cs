@@ -1,4 +1,5 @@
 ﻿using ImageImporter.Data;
+using ImageImporter.Models.Db;
 using ImageImporter.Services;
 
 namespace ImageImporter.Application.Importers
@@ -17,15 +18,11 @@ namespace ImageImporter.Application.Importers
         }
 
 
-        public async Task<ImportResult> ImportFile(string file)
+        public async Task ImportFile(string file, ImportResult result)
         {
-            ImportResult result = new ImportResult();
+            await ImageImporter.ImportFile(file, result);
 
-            if(!result.Success)
-                result = await ImageImporter.ImportFile(file);
-
-
-            return result;
+            //TODO: Other importers!
         }
     }
 

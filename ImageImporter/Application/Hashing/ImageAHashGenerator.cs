@@ -4,7 +4,7 @@ using SixLabors.ImageSharp.Processing;
 
 namespace ImageImporter.Application.Hashing
 {
-    public class ImageAHashGenerator : IImageHashGenerator
+    public class ImageAHashGenerator : IHashGenerator
     {
         public int HashWidth { get; set; } = 32;
         public int HashHeight { get; set; } = 32;
