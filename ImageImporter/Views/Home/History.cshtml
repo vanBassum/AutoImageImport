@@ -18,7 +18,8 @@
                     <th>Status </th>
                     <th>Hash </th>
                     <th>RelativePath</th>
-                    <th></th>
+                    <th>Kept</th>
+                    <th>Removed</th>
 	            </tr></thead>
 
                 <tbody>
@@ -31,7 +32,8 @@
                         <td id="Status ">@item.Status </td>
                         <td id="Hash ">@item.Hash </td>
                         <td id="RelativePath">@item.RelativePath</td>
-                        <td id="Image"><img id="sample-img" src="@item.Thumb"/><img id="sample-img" src="@item.RemovedThumb"/></td>
+                        <td id="Thumb"><img src="@item.Thumb" class="thumb"/></td>
+                        <td id="RMThumb"><img src="@item.RemovedThumb" class="thumb"/></td>
 					</tr>
 				}
 

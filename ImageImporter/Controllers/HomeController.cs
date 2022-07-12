@@ -16,13 +16,15 @@ namespace ImageImporter.Controllers
         private readonly ISchedulerFactory factory;
         private readonly JobsTracker jobsTracker;
         private readonly ApplicationDbContext context;
+        private readonly Settings settings;
 
-        public HomeController(ISchedulerFactory factory, ILogger<HomeController> logger, JobsTracker jobsTracker, ApplicationDbContext context)
+        public HomeController(ISchedulerFactory factory, ILogger<HomeController> logger, JobsTracker jobsTracker, ApplicationDbContext context, Settings settings)
         {
             this.factory = factory;
             this.logger = logger;
             this.jobsTracker = jobsTracker;
             this.context = context;
+            this.settings = settings;
         }
 
 
@@ -45,7 +47,8 @@ namespace ImageImporter.Controllers
                 var a = new ImportResultViewModel(item);
                 if(item.MatchedWithId != null)
                 {
-                    a.Thumb = context.Pictures.Find(item.MatchedWithId)?.Thumbnail;
+                    a.RemovedThumb = Path.Combine(settings.ImageThumbnailFolder, item.RemovedFileThumb).Replace("wwwroot","");
+                    a.Thumb = Path.Combine(settings.ImageThumbnailFolder, context.Pictures.Find(item.MatchedWithId)?.Thumbnail).Replace("wwwroot", "");
                 }
                 
                 model.Add(a);
@@ -53,16 +56,6 @@ namespace ImageImporter.Controllers
 
             return View(model);
         }
-
-        public async Task<IActionResult> GetThumbnail(int id)
-        {
-            var result = await context.ImportResults.FindAsync(id);
-            if (result == null)
-                return NotFound();
-            return Ok(result.RemovedFileThumb);
-        }
-
-
 
 
         public IActionResult Privacy()

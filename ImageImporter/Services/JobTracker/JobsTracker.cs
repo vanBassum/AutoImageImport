@@ -82,7 +82,15 @@ namespace ImageImporter.Services.JobTracker
 
 
 
-
+        public JobKey? FindJobkeyByName(string name)
+        {
+            foreach(var kvp in Jobs)
+            {
+                if (kvp.Key.Name == name)
+                    return kvp.Key;
+            }
+            return null;
+        }
 
 
 

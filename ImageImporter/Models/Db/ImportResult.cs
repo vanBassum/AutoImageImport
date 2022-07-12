@@ -18,6 +18,7 @@ namespace ImageImporter.Models.Db
         public string? RemovedFileThumb { get; set; }
         public ImporterTypes ImporterType { get; set; } = ImporterTypes.Unknown;
         public int? MatchedWithId { get; set; }
+        public int? ImportedId { get; set; }
         public ImportResult()
         {
             Success = false;

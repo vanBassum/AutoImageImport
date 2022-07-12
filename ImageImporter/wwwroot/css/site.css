@@ -19,6 +19,20 @@ body {
 }
 
 
+.thumb {
+    max-height: 128px;
+    max-width: 128px;
+    height: auto;
+    width: auto;
+
+    transition: transform .2s; /* Animation */
+    margin: 0 auto;
+}
+
+    .thumb:hover {
+        transform: scale(4); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+    }
+
 table {
     border: 1px solid #ccc;
     border-collapse: collapse;

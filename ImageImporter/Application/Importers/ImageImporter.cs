@@ -127,7 +127,11 @@ namespace ImageImporter.Application.Importers
         {
             using var image = Image.Load<Rgba32>(file);
             image.Mutate(x => x.Resize(Settings.ImageThumbnailSize));
-            return image.ToBase64String(PngFormat.Instance);
+            var filename = DateTime.Now.ToString("yyyymmddHHmmssfff") + ".jpg";
+            var path = Path.Combine(Settings.ImageThumbnailFolder, filename);
+            Directory.CreateDirectory(Path.GetDirectoryName(path));
+            await image.SaveAsJpegAsync(path);
+            return filename;
         }
 
     }

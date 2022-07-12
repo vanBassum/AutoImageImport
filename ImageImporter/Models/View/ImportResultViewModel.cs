@@ -26,7 +26,6 @@ namespace ImageImporter.Models.View
             Hash = result.Hash!=null?Convert.ToHexString(result.Hash):"";
             Timestamp = result.Timestamp?.ToString(@"dd-MM-yyyy HH:mm:ss");
             JobStartTime = result.JobStartTime?.ToString(@"dd-MM-yyyy HH:mm:ss");
-            RemovedThumb = result.RemovedFileThumb;
         }
 
     }

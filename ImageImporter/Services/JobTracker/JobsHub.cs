@@ -7,9 +7,11 @@ namespace ImageImporter.Services.JobTracker
     public class JobsHub : Hub
     {
         private readonly ISchedulerFactory factory;
-        public JobsHub(ISchedulerFactory factory, IHubContext<JobsHub> hubContext)
+        private readonly JobsTracker tracker;
+        public JobsHub(ISchedulerFactory factory, IHubContext<JobsHub> hubContext, JobsTracker tracker)
         {
             this.factory = factory;
+            this.tracker = tracker; 
         }
 
         public async Task RunJob(string name)
@@ -22,5 +24,6 @@ namespace ImageImporter.Services.JobTracker
                 await scheduler.TriggerJob(jobKey);
             }
         }
+
     }
 }
