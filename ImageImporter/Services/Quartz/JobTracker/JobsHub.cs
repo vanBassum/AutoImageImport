@@ -1,8 +1,7 @@
-﻿using ImageImporter.Helpers.Quartz;
-using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.SignalR;
 using Quartz;
 
-namespace ImageImporter.Services.JobTracker
+namespace ImageImporter.Services.Quartz.JobTracker
 {
     public class JobsHub : Hub
     {
@@ -11,7 +10,7 @@ namespace ImageImporter.Services.JobTracker
         public JobsHub(ISchedulerFactory factory, IHubContext<JobsHub> hubContext, JobsTracker tracker)
         {
             this.factory = factory;
-            this.tracker = tracker; 
+            this.tracker = tracker;
         }
 
         public async Task RunJob(string name)
@@ -19,7 +18,7 @@ namespace ImageImporter.Services.JobTracker
             var scheduler = await factory.GetScheduler();
             var jobKey = (await scheduler.GetJobKeyByName(name)).First();
 
-            if(jobKey != null)
+            if (jobKey != null)
             {
                 await scheduler.TriggerJob(jobKey);
             }

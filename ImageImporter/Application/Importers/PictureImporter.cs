@@ -12,12 +12,11 @@ using System.Text.RegularExpressions;
 
 namespace ImageImporter.Application.Importers
 {
-
-    public class ImageImporter : BaseImporter
+    public class PictureImporter : BaseImporter<PictureImportResult>
     {
         private Settings Settings { get; }
         private ApplicationDbContext Context { get; }
-        public ImageImporter(Settings settings, ApplicationDbContext context)
+        public PictureImporter(Settings settings, ApplicationDbContext context)
         {
             Settings = settings;
             Context = context;
@@ -31,13 +30,13 @@ namespace ImageImporter.Application.Importers
 
         protected override bool UseRecycleFolder => Settings.ImageUseRecycleFolder;
 
-        protected override async Task<bool> CheckFile(string source)
+        protected override async Task<bool> CheckFile(PictureImportResult result, string source)
         {
             IImageInfo srcInfo = Image.Identify(source);
             return srcInfo != null;
         }
 
-        protected override async Task<byte[]?> CalculateHash(string source)
+        protected override async Task<byte[]?> CalculateHash(PictureImportResult result, string source)
         {
             IHashGenerator? hashGenerator = null;
             switch (Settings.ImageHashingAlgorithm)
@@ -59,21 +58,21 @@ namespace ImageImporter.Application.Importers
             return await hashGenerator.Generate(source);
         }
 
-        protected override async Task<(int Id, string File)?> FindExistingByHash(byte[] hash)
+        protected override async Task<(int Id, string File)?> FindExistingByHash(PictureImportResult result, byte[] hash)
         {
-            (int Id, string File) result;
+            (int Id, string File) ret;
             var match = Context.Pictures.FirstOrDefault(a => a.Hash.SequenceEqual(hash));
             if (match != null)
             {
-                result.Id = match.Id;
-                result.File = match.Path;
-                return result;
+                ret.Id = match.Id;
+                ret.File = match.Path;
+                return ret;
             }
 
             return null;
         }
 
-        protected override async Task<bool?> CheckIfSourceIsBetter(string source, string destination)
+        protected override async Task<bool?> CheckIfSourceIsBetter(PictureImportResult result, string source, string destination)
         {
             var src = new FileInfo(source);
             var dst = new FileInfo(destination);
@@ -98,32 +97,30 @@ namespace ImageImporter.Application.Importers
 
         }
 
-        protected override async Task<ImportResult> AfterImport(ImportResult import)
+        protected override async Task AfterImport(PictureImportResult result)
         {
-            if (!import.Success)
-                return import;
+            if (!result.Success)
+                return;
 
             Picture picture;
-            switch (import.Status)
+            switch (result.Status)
             {
                 case ImportStatus.ImportedUniqueFile:
                     picture = new Picture();
-                    picture.Path = import.RelativePath;
-                    picture.Hash = import.Hash;
-                    picture.Thumbnail = await CreateThumbnail(Path.Combine(ExportFolder, import.RelativePath));
+                    picture.Path = result.RelativePath;
+                    picture.Hash = result.Hash;
+                    picture.Thumbnail = await CreateThumbnail(result, Path.Combine(ExportFolder, result.RelativePath));
                     Context.Add(picture);
                     break;
 
                 case ImportStatus.HashMatchKeptSource:
-                    picture = await Context.Pictures.FindAsync(import.Id);
-                    picture.Thumbnail = await CreateThumbnail(Path.Combine(ExportFolder, import.RelativePath));
+                    picture = await Context.Pictures.FindAsync(result.Id);
+                    picture.Thumbnail = await CreateThumbnail(result, Path.Combine(ExportFolder, result.RelativePath));
                     break;
             }
-            
-            return import;
         }
 
-        protected override async Task<string?> CreateThumbnail(string file)
+        protected override async Task<string?> CreateThumbnail(PictureImportResult result, string file)
         {
             using var image = Image.Load<Rgba32>(file);
             image.Mutate(x => x.Resize(Settings.ImageThumbnailSize));

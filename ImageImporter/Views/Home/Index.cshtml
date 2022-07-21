@@ -11,49 +11,8 @@
 <div class="container">
     <div class="row">
         <fieldset>
-            <legend class="FieldSet-legend-2KHms">Scheduled</legend>
-            <table class="Table-table-1Ion0">
-	            <thead><tr>
-	                <th class="">Name</th>
-	                <th class="">Interval</th>
-	                <th class="">Last Execution</th>
-	                <th class="">Last Duration</th>
-	                <th class="">Next Execution</th>
-	                <th class="">Progress</th>
-					<th class=""></th>
-	            </tr></thead>
-
-                <tbody>
-					
-                @foreach(var job in Model)
-				{
-					
-					<tr id="@job.Name">
-					<td id="name">@job.Name     </td>
-					<td id="interval">@job.Interval     </td>
-					<td id="lastExecution">@job.LastExecution</td>
-					<td id="duration">@job.Duration </td>
-					<td id="nextExecution">@job.NextExecution</td>
-					<td id="progress">
-						<div class="progress-bar" 
-								role="progressbar" 
-								style="width: @job.Progress%;" 
-								aria-valuenow="@job.Progress" 
-								aria-valuemin="0" 
-								aria-valuemax="100">
-								@job.ProgressMessage
-							</div>
-					</td>
-					<td id="button">
-						<button type="button" class="btn btn-default runJob" jobKey="@job.Name">
-							<span class="glyphicon glyphicon-repeat"></span>
-						</button>
-					</td>
-					</tr>
-				}
-
-				</tbody>
-            </table>
+            <legend class="FieldSet-legend-2KHms">Home</legend>
+            
         </fieldset>
     </div>
 </div>

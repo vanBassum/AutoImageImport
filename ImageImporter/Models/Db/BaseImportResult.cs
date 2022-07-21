@@ -1,30 +1,20 @@
 ﻿using ImageImporter.Models.Enums;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ImageImporter.Models.Db
 {
-    public class ImportResult
+    public class BaseImportResult
     {
         [Key]
         public int Id { get; set; }
         public bool Success { get; set; } = false;
         public ImportStatus Status { get; set; } = ImportStatus.Unknown;
-        public string? Exception { get; set; }
-        public string? RelativePath { get; set; }
-        public byte[]? Hash { get; set; }
         public DateTime? Timestamp { get; set; }
         public DateTime? JobStartTime { get; set; }
-        public string? RemovedFileThumb { get; set; }
-        public ImporterTypes ImporterType { get; set; } = ImporterTypes.Unknown;
-        public int? MatchedWithId { get; set; }
-        public int? ImportedId { get; set; }
-        public ImportResult()
-        {
-            Success = false;
-            Status = ImportStatus.Unknown;
-            Timestamp = DateTime.Now;
-        }
+        public string? Exception { get; set; }
+        public byte[]? Hash { get; set; }
+
+        public virtual DbFile? RemovedFile { get; set; }
 
         public void SetResult(bool success, ImportStatus status)
         {
@@ -38,5 +28,10 @@ namespace ImageImporter.Models.Db
             Status = ImportStatus.ExceptionThrown;
             Exception = exception.Message;
         }
+
+
     }
+
+
+
 }

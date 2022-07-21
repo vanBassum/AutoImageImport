@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ImageImporter.Models.Db
 {
@@ -7,11 +6,8 @@ namespace ImageImporter.Models.Db
     {
         [Key]
         public int Id { get; set; }
-        public string? Path { get; set; }
+        public DbFile? File { get; set; }
         public byte[]? Hash { get; set; }
-        [Column(TypeName = "text")]
         public string? Thumbnail { get; set; }
-
     }
-
 }

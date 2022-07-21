@@ -1,6 +1,6 @@
-﻿using ImageImporter.Models.Enums;
-using ImageImporter.Services;
-using ImageImporter.Services.JobTracker;
+﻿
+
+using ImageImporter.Services.Quartz.JobTracker;
 
 namespace ImageImporter.Models.View
 {
@@ -12,7 +12,6 @@ namespace ImageImporter.Models.View
         public string Duration { get; set; }
         public string NextExecution { get; set; }
         public string Progress { get; set; }
-        public string ProgressMessage { get; set; }
         public bool IsRunning { get; set; }
 
         public JobInfoViewModel(JobInfo info)
@@ -22,8 +21,7 @@ namespace ImageImporter.Models.View
             NextExecution = info.NextExecution?.ToString(@"dd-MM-yyyy HH:mm:ss");
             Interval = info.Interval?.ToString(@"hh\:mm\:ss");
             Duration = info.Duration?.ToString(@"hh\:mm\:ss");
-            Progress = (info.Progress*100)?.ToString("F0");
-            ProgressMessage = info.ProgressMessage;
+            Progress = (info.Progress * 100)?.ToString("F0");
             IsRunning = info.IsRunning;
         }
 

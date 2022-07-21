@@ -17,66 +17,6 @@ namespace ImageImporter.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.15");
 
-            modelBuilder.Entity("ImageImporter.Models.Db.ImportResult", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Exception")
-                        .HasColumnType("text");
-
-                    b.Property<byte[]>("Hash")
-                        .HasColumnType("varbinary(4000)");
-
-                    b.Property<int>("ImporterType")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("JobStartTime")
-                        .HasColumnType("datetime");
-
-                    b.Property<int?>("MatchedWithId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("RelativePath")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RemovedFileThumb")
-                        .HasColumnType("text");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("Success")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<DateTime?>("Timestamp")
-                        .HasColumnType("datetime");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ImportResults");
-                });
-
-            modelBuilder.Entity("ImageImporter.Models.Db.Picture", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<byte[]>("Hash")
-                        .HasColumnType("varbinary(4000)");
-
-                    b.Property<string>("Path")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Thumbnail")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Pictures");
-                });
 
             modelBuilder.Entity("ImageImporter.Models.Db.Setting", b =>
                 {

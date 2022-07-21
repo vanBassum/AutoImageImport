@@ -1,4 +1,4 @@
-﻿namespace ImageImporter.Helpers.Quartz
+﻿namespace ImageImporter.Services.Quartz
 {
     public class JobKeyAttribute : Attribute
     {

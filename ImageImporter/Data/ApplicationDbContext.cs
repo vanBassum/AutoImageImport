@@ -9,7 +9,8 @@ namespace ImageImporter.Data
     {
         public DbSet<Setting> Settings { get; set; }
         public DbSet<Picture> Pictures { get; set; }
-        public DbSet<ImportResult> ImportResults { get; set; }
+        public DbSet<BaseImportResult> ImportResults { get; set; }
+        public DbSet<DbFile> Files { get; set; }
 
         public ApplicationDbContext()
             : base()

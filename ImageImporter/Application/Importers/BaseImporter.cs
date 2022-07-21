@@ -4,34 +4,35 @@ using System.Text.RegularExpressions;
 
 namespace ImageImporter.Application.Importers
 {
-    public abstract class BaseImporter : IImporter
+
+    public abstract class BaseImporter<T> where T : BaseImportResult
     {
         protected abstract string ImportFolder { get; }
         protected abstract string ExportFolder { get; }
         protected abstract string RecylceFolder { get; }
         protected abstract bool UseRecycleFolder { get; }
-        protected abstract Task<bool> CheckFile(string source);
-        protected abstract Task<byte[]?> CalculateHash(string source);
-        protected abstract Task<(int Id, string File)?> FindExistingByHash(byte[] hash);
-        protected abstract Task<bool?> CheckIfSourceIsBetter(string source, string destination);
-        protected virtual async Task AfterImport(ImportResult import) { return; }
-        protected virtual async Task<string?> CreateThumbnail(string file) { return null; }
+        protected abstract Task<bool> CheckFile(T result, string source);
+        protected abstract Task<byte[]?> CalculateHash(T result, string source);
+        protected abstract Task<(int Id, string File)?> FindExistingByHash(T result, byte[] hash);
+        protected abstract Task<bool?> CheckIfSourceIsBetter(T result, string source, string destination);
+        protected virtual async Task AfterImport(T result ) { return; }
+        protected virtual async Task<string?> CreateThumbnail(T result, string file) { return null; }
 
 
-        public async Task ImportFile(string source, ImportResult result)
+        public async Task ImportFile(string source, T result)
         {
             try
             {
                 string relPath = Path.GetRelativePath(ImportFolder, source);
                 result.RelativePath = relPath;
 
-                if (!await CheckFile(source))
+                if (!await CheckFile(result, source))
                 {
                     result.SetResult(false, ImportStatus.IncorrectFileType);
                     return;
                 }
 
-                var hash = await CalculateHash(source);
+                var hash = await CalculateHash(result, source);
                 if(hash == null)
                 {
                     result.SetResult(false, ImportStatus.HashingFailed);
@@ -40,7 +41,7 @@ namespace ImageImporter.Application.Importers
                 result.Hash = hash;
 
                 string destination = Path.Combine(ExportFolder, relPath);
-                var existingObj = await FindExistingByHash(hash);
+                var existingObj = await FindExistingByHash(result, hash);
                 
 
                 if (existingObj == null)
@@ -54,9 +55,8 @@ namespace ImageImporter.Application.Importers
                 else
                 {
                     string existing = existingObj.Value.File;
-                    result.MatchedWithId = existingObj.Value.Id;
                     existing = Path.Combine(ExportFolder, existing);
-                    var sourceIsBetter = await CheckIfSourceIsBetter(source, existing);
+                    var sourceIsBetter = await CheckIfSourceIsBetter(result, source, existing);
                     if (!sourceIsBetter.HasValue)
                     {
                         result.SetResult(false, ImportStatus.CoulntDetermineBestQuality);
@@ -91,14 +91,20 @@ namespace ImageImporter.Application.Importers
             File.Move(source, destination);
         }
 
-        public async void DeleteFile(string file, ImportResult result)
+        public async void DeleteFile(string file, T result)
         {
-            result.RemovedFileThumb = await CreateThumbnail(file);
+
+            result.RemovedFile = new RemovedFile()
+            { 
+                Thumbnail = await CreateThumbnail(result, file)
+            };
+
             if (UseRecycleFolder)
             {
                 string relPath = Path.GetRelativePath(ImportFolder, file);
                 string destination = Path.Combine(RecylceFolder, relPath);
                 destination = RenameUntillUnique(destination);
+                result.RemovedFile.Path = destination;
                 MoveFile(file, destination);
             }
             else

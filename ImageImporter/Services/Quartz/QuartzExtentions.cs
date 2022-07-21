@@ -1,7 +1,8 @@
-﻿using Quartz;
+﻿using ImageImporter.Services.Quartz;
+using Quartz;
 using Quartz.Impl.Matchers;
 
-namespace ImageImporter.Helpers.Quartz
+namespace ImageImporter.Services.Quartz
 {
 
 
@@ -14,7 +15,7 @@ namespace ImageImporter.Helpers.Quartz
             if (key == null)
                 throw new Exception($"Missing Key attribute for {nameof(T)}");
 
-            quartz.AddJob<T>(opts => opts.WithIdentity(key)) ;
+            quartz.AddJob<T>(opts => opts.WithIdentity(key));
             quartz.AddTrigger(opts => opts
                     .ForJob(key)
                     .WithIdentity($"{key}-trg")
@@ -23,7 +24,7 @@ namespace ImageImporter.Helpers.Quartz
 
         public async static Task<List<JobKey>> GetJobKeyByName(this IScheduler scheduler, string name)
         {
-            List<JobKey> result = new ();
+            List<JobKey> result = new();
             var allTriggerKeys = await scheduler.GetTriggerKeys(GroupMatcher<TriggerKey>.AnyGroup());
 
             foreach (var triggerKey in allTriggerKeys)
@@ -31,7 +32,7 @@ namespace ImageImporter.Helpers.Quartz
                 var triggerdetails = await scheduler.GetTrigger(triggerKey);
                 var jobKey = triggerdetails?.JobKey;
 
-                if(jobKey.Name == name)
+                if (jobKey.Name == name)
                 {
                     result.Add(jobKey);
                 }
@@ -39,5 +40,13 @@ namespace ImageImporter.Helpers.Quartz
             return result;
         }
 
+        public static IEnumerable<T> GetCustomAttributes<T>(this Type t, bool inherit)
+        {
+            foreach (var type in t.GetCustomAttributes(false))
+            {
+                if (type is T a)
+                    yield return a;
+            }
+        }
     }
 }

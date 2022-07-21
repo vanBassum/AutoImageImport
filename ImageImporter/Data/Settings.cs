@@ -1,8 +1,9 @@
-﻿using ImageImporter.Data;
-using ImageImporter.Models.Enums;
+﻿using ImageImporter.Models.Enums;
+using ImageImporter.Services;
 using SixLabors.ImageSharp;
+using System.ComponentModel.DataAnnotations;
 
-namespace ImageImporter.Services
+namespace ImageImporter.Data
 {
     public class Settings : SettingsService
     {
@@ -19,6 +20,7 @@ namespace ImageImporter.Services
         public ImageQualityCompareMethods ImageQualityCompareMethod { get => GetPar(ImageQualityCompareMethods.Resolution); set => SetPar(value); }
         public ImageHashingAlgorithms ImageHashingAlgorithm { get => GetPar(ImageHashingAlgorithms.AHashing); set => SetPar(value); }
     }
+
 
 
 
