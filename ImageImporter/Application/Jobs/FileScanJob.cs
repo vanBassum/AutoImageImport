@@ -1,7 +1,5 @@
 ﻿using CoenM.ImageHash;
 using CoenM.ImageHash.HashAlgorithms;
-using ImageImporter.Application.Comparers;
-using ImageImporter.Application.Importers;
 using ImageImporter.Application.Quantifiers;
 using ImageImporter.Data;
 using ImageImporter.Models.Db;
@@ -33,7 +31,6 @@ namespace ImageImporter.Application.Jobs
 
         public async Task Execute(IJobExecutionContext jobContext)
         {
-            PictureImporter pictureImporter = new PictureImporter(Settings, Context);
             Directory.CreateDirectory(Settings.ImageExportFolder);
             var files = Directory.GetFiles(Settings.ImageExportFolder, "*", SearchOption.AllDirectories);
             int count = files.Length;

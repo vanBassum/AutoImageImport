@@ -1,5 +1,4 @@
-﻿using ImageImporter.Application.Importers;
-using ImageImporter.Data;
+﻿using ImageImporter.Data;
 using ImageImporter.Models.Db;
 using ImageImporter.Models.Db.ActionItems;
 using ImageImporter.Services.Quartz;
@@ -25,8 +24,8 @@ namespace ImageImporter.Application.Jobs
 
         public async Task Execute(IJobExecutionContext jobContext)
         {
-            PictureImporter pictureImporter = new PictureImporter(Settings, Context);
             JobResult jobResult = new JobResult();
+            await JobsTracker.ApplyJobStatistics(jobContext, jobResult);
             Context.Add(jobResult);
 
             int counter = 0;

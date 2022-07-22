@@ -1,5 +1,6 @@
 ﻿using ImageImporter.Data;
 using ImageImporter.Models;
+using ImageImporter.Models.Db;
 using ImageImporter.Models.Db.ActionItems;
 using ImageImporter.Models.Enums;
 using ImageImporter.Models.View;
@@ -31,59 +32,20 @@ namespace ImageImporter.Controllers
 
         public async Task<IActionResult> Index()
         {
-            //var db = from item in context.PictureImportItems
-            //         orderby item.Id descending
-            //         select new PictureImportItemViewModel
-            //         {
-            //             Id = item.Id,
-            //             Source = item.Source,
-            //             Destination = item.Destination,
-            //             Hash = "0x" + Convert.ToHexString(BitConverter.GetBytes(item.Picture.Hash ?? 0)),
-            //             File = Path.Combine(settings.ImageExportFolder, item.Picture.File).Replace("wwwroot", ""),
-            //             Thumbnail = Path.Combine(settings.ImageThumbnailFolder, item.Picture.Thumbnail).Replace("wwwroot", ""),
-            //             ActionType = ActionType.PictureImportItem,
-            //         };
-
-
-            //var recycleFolder = settings.ImageRecycleFolder;
-            //var thumbnailFolder = settings.ImageThumbnailFolder;
-            //var exportFolder = settings.ImageExportFolder;
-            //
-            //
-            //var db = from a in context.PictureImportItems.Include(a => a.Picture)
-            //         orderby a.Id descending
-            //         select a;
-            //
-            //
-            //var model = new List<PictureImportItemViewModel>();
-            //
-            //foreach (var item in db.Take(100))
-            //{
-            //    PictureImportItemViewModel piivm = new PictureImportItemViewModel();
-            //    piivm.Id = item.Id;
-            //    piivm.Source = item.Source;
-            //    piivm.Destination = item.Destination;
-            //    piivm.Hash = "0x" + Convert.ToHexString(BitConverter.GetBytes(item?.Picture?.Hash ?? 0));
-            //    piivm.File = item?.Picture?.File?.Replace("wwwroot", "");
-            //    piivm.Thumbnail = item?.Picture?.Thumbnail?.Replace("wwwroot", "");
-            //    piivm.ActionType = ActionType.PictureImportItem;
-            //
-            //    if (item is PictureMatchImportItem pmii)
-            //    {
-            //        piivm.KeptSource = pmii.KeptSource;
-            //        piivm.RemovedFile = pmii.RemovedFile?.Replace("wwwroot", "");
-            //        piivm.RemovedFileThumbnail = pmii.RemovedFileThumbnail?.Replace("wwwroot", "");
-            //        piivm.ActionType = ActionType.PictureMatchImportItem;
-            //    }
-            //    model.Add(piivm);
-            //}
-
-
-
             var actions = context.ActionItems.OrderByDescending(a => a.Id).Take(100).ToList();
             return View(actions);
         }
 
+
+        public async Task<IActionResult> Duplicates()
+        {
+
+            var duplicates = context.Pictures.Where(p=>!p.Deleted).OrderBy(p => p.Hash).Take(100).ToList().NonDistinct(a=>a.Hash);
+
+            return View(duplicates);
+
+
+        }
 
         public IActionResult Privacy()
         {
@@ -95,5 +57,18 @@ namespace ImageImporter.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+
+
+        
     }
+
+    public static class Ext
+    {
+        public static IEnumerable<T> NonDistinct<T, TKey>(this IEnumerable<T> source, Func<T, TKey> keySelector)
+        {
+            return source.GroupBy(keySelector).Where(g => g.Count() > 1).SelectMany(r => r);
+        }
+    }
+
 }

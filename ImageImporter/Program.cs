@@ -6,6 +6,7 @@ using DB4045.Data.Seeds;
 using ImageImporter.Services.Quartz.JobTracker;
 using ImageImporter.Services.Quartz;
 using ImageImporter.Application.Jobs;
+using ImageImporter.Application.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -73,6 +74,7 @@ app.MapControllerRoute(
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapHub<JobsHub>("/jobshub");
+    endpoints.MapHub<DuplicatesHub>("/duplicateshub");
 });
 
 app.MapRazorPages();
