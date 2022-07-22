@@ -1,5 +1,7 @@
-﻿@using ImageImporter.Models.Db
+﻿@using ImageImporter.Helpers
+@using ImageImporter.Models.Db
 @using ImageImporter.Models.Enums
+@using System.IO;
 @model IEnumerable<Picture>
 
 
@@ -24,8 +26,7 @@
             <legend class="FieldSet-legend-2KHms">Duplicates</legend>
             <table class="Table-table-1Ion0">
 	            <thead><tr>
-	                <th class="">Hash</th>
-					<th class="">Quality</th>
+					<th class="">Info</th>
 	                <th class="">Image</th>
 					<th></th>
 	            </tr></thead>
@@ -34,10 +35,13 @@
 					
                 @foreach(var item in Model)
 				{
-					
-					<tr id="@item.Id" item-hash="@item.Hash">
-					<td>@item.Hash</td>
-					<td>@item.Quality</td>
+					<tr id="@item.Id">
+					<td>
+						@Helpers.HumanSize(item.FileSize) <br>
+						@item.Width x @item.Height <br>
+						@Convert.ToHexString(BitConverter.GetBytes(item.Hash ?? 0)) <br>
+						@item.File
+					</td>
 					<td>
 						<a href="@item.File.Replace("wwwroot", "")">
 							<div class="card icard" style="width: 18rem;">

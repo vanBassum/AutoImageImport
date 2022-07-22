@@ -12,5 +12,10 @@ namespace ImageImporter.Models.Db
         public string? Thumbnail { get; set; }
         public int Quality { get; set; }
         public bool Deleted { get; set; } = false;
+        public int Width { get; set; }
+        public int Height { get; set; }
+        public long FileSize { get; set; }
+
+
     }
 }
