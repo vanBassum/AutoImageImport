@@ -56,7 +56,7 @@ namespace ImageImporter.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseMySQL("Server=h2954374.stratoserver.net;Database=ImageImporterTesting;Uid=ImageImporterTesting;Pwd=6NVvBWXnjg7tVcWjTdVMdPf;");
+            //optionsBuilder.UseMySQL("Server=h2954374.stratoserver.net;Database=ImageImporterTesting;Uid=ImageImporterTesting;Pwd=6NVvBWXnjg7tVcWjTdVMdPf;");
             optionsBuilder.UseLazyLoadingProxies();
         }
     }

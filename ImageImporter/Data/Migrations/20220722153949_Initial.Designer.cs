@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ImageImporter.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220708160112_addedSettings")]
-    partial class addedSettings
+    [Migration("20220722153949_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -18,6 +18,80 @@ namespace ImageImporter.Migrations
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 64)
                 .HasAnnotation("ProductVersion", "5.0.15");
+
+            modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.ActionItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ActionItemId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("JobResultId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ActionItemId");
+
+                    b.HasIndex("JobResultId");
+
+                    b.ToTable("ActionItems");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("ActionItem");
+                });
+
+            modelBuilder.Entity("ImageImporter.Models.Db.JobResult", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<TimeSpan?>("Duration")
+                        .HasColumnType("time");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("Started")
+                        .HasColumnType("datetime");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("JobResults");
+                });
+
+            modelBuilder.Entity("ImageImporter.Models.Db.Picture", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<bool>("Deleted")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("File")
+                        .HasColumnType("text");
+
+                    b.Property<long?>("Hash")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Quality")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Thumbnail")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Pictures");
+                });
 
             modelBuilder.Entity("ImageImporter.Models.Db.Setting", b =>
                 {
@@ -242,6 +316,42 @@ namespace ImageImporter.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.PictureFoundItem", b =>
+                {
+                    b.HasBaseType("ImageImporter.Models.Db.ActionItems.ActionItem");
+
+                    b.Property<int?>("PictureId")
+                        .HasColumnType("int");
+
+                    b.HasIndex("PictureId");
+
+                    b.HasDiscriminator().HasValue("PictureFoundItem");
+                });
+
+            modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.PictureRemovedItem", b =>
+                {
+                    b.HasBaseType("ImageImporter.Models.Db.ActionItems.ActionItem");
+
+                    b.Property<int?>("PictureId")
+                        .HasColumnType("int")
+                        .HasColumnName("PictureRemovedItem_PictureId");
+
+                    b.HasIndex("PictureId");
+
+                    b.HasDiscriminator().HasValue("PictureRemovedItem");
+                });
+
+            modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.ActionItem", b =>
+                {
+                    b.HasOne("ImageImporter.Models.Db.ActionItems.ActionItem", null)
+                        .WithMany("ActionsLog")
+                        .HasForeignKey("ActionItemId");
+
+                    b.HasOne("ImageImporter.Models.Db.JobResult", null)
+                        .WithMany("ActionsLog")
+                        .HasForeignKey("JobResultId");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -291,6 +401,34 @@ namespace ImageImporter.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.PictureFoundItem", b =>
+                {
+                    b.HasOne("ImageImporter.Models.Db.Picture", "Picture")
+                        .WithMany()
+                        .HasForeignKey("PictureId");
+
+                    b.Navigation("Picture");
+                });
+
+            modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.PictureRemovedItem", b =>
+                {
+                    b.HasOne("ImageImporter.Models.Db.Picture", "Picture")
+                        .WithMany()
+                        .HasForeignKey("PictureId");
+
+                    b.Navigation("Picture");
+                });
+
+            modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.ActionItem", b =>
+                {
+                    b.Navigation("ActionsLog");
+                });
+
+            modelBuilder.Entity("ImageImporter.Models.Db.JobResult", b =>
+                {
+                    b.Navigation("ActionsLog");
                 });
 #pragma warning restore 612, 618
         }

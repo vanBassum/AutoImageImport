@@ -326,25 +326,6 @@ namespace ImageImporter.Migrations
                     b.HasDiscriminator().HasValue("PictureFoundItem");
                 });
 
-            modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.PictureImportItem", b =>
-                {
-                    b.HasBaseType("ImageImporter.Models.Db.ActionItems.ActionItem");
-
-                    b.Property<string>("Destination")
-                        .HasColumnType("text");
-
-                    b.Property<int?>("PictureId")
-                        .HasColumnType("int")
-                        .HasColumnName("PictureImportItem_PictureId");
-
-                    b.Property<string>("Source")
-                        .HasColumnType("text");
-
-                    b.HasIndex("PictureId");
-
-                    b.HasDiscriminator().HasValue("PictureImportItem");
-                });
-
             modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.PictureRemovedItem", b =>
                 {
                     b.HasBaseType("ImageImporter.Models.Db.ActionItems.ActionItem");
@@ -356,22 +337,6 @@ namespace ImageImporter.Migrations
                     b.HasIndex("PictureId");
 
                     b.HasDiscriminator().HasValue("PictureRemovedItem");
-                });
-
-            modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.PictureMatchImportItem", b =>
-                {
-                    b.HasBaseType("ImageImporter.Models.Db.ActionItems.PictureImportItem");
-
-                    b.Property<bool?>("KeptSource")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("RemovedFile")
-                        .HasColumnType("text");
-
-                    b.Property<string>("RemovedFileThumbnail")
-                        .HasColumnType("text");
-
-                    b.HasDiscriminator().HasValue("PictureMatchImportItem");
                 });
 
             modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.ActionItem", b =>
@@ -437,15 +402,6 @@ namespace ImageImporter.Migrations
                 });
 
             modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.PictureFoundItem", b =>
-                {
-                    b.HasOne("ImageImporter.Models.Db.Picture", "Picture")
-                        .WithMany()
-                        .HasForeignKey("PictureId");
-
-                    b.Navigation("Picture");
-                });
-
-            modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.PictureImportItem", b =>
                 {
                     b.HasOne("ImageImporter.Models.Db.Picture", "Picture")
                         .WithMany()
