@@ -33,11 +33,11 @@ builder.Services.AddQuartz(quartz => {
     //    .RepeatForever());
 
     quartz.AddJob<FileScanJob>(x => x
-        .WithIntervalInMinutes(2)
+        .WithIntervalInHours(12)
         .RepeatForever());
 
     quartz.AddJob<FileCleanupJob>(x => x
-        .WithIntervalInMinutes(2)
+        .WithIntervalInHours(12)
         .RepeatForever());
 
 });
