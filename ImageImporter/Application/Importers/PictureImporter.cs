@@ -1,5 +1,6 @@
-﻿using ImageImporter.Application.Comparers;
-using ImageImporter.Application.Hashing;
+﻿using CoenM.ImageHash;
+using CoenM.ImageHash.HashAlgorithms;
+using ImageImporter.Application.Comparers;
 using ImageImporter.Data;
 using ImageImporter.Models.Db;
 using ImageImporter.Models.Db.ActionItems;
@@ -43,10 +44,11 @@ namespace ImageImporter.Application.Importers
                 picture.Hash = hash;
                 picture.Thumbnail = await CreateThumbnail(destination);
 
-                var result = new PictureUniqueImportItem();
+                var result = new PictureImportItem();
                 result.Source = source;
                 result.Destination = destination;
                 result.Picture = picture;
+                return result;
             }
             else
             {
@@ -62,13 +64,13 @@ namespace ImageImporter.Application.Importers
 
                     if (sourceIsBetter.Value)
                     {
-                        result.RemovedFile = await DeleteFile(destination);
+                        result.RemovedFile = await DeleteFile(Settings.ImageExportFolder, destination);
                         result.RemovedFileThumbnail = await CreateThumbnail(result.RemovedFile);
                         MoveFile(source, destination);
                     }
                     else
                     {
-                        result.RemovedFile = await DeleteFile(source);
+                        result.RemovedFile = await DeleteFile(Settings.ImageImportFolder, source);
                         result.RemovedFileThumbnail = await CreateThumbnail(result.RemovedFile);
                     }
 
@@ -79,36 +81,37 @@ namespace ImageImporter.Application.Importers
         }
 
 
-        private async Task<string> DeleteFile(string file)
+        private async Task<string> DeleteFile(string fol, string file)
         {
-            string relPath = Path.GetRelativePath(Settings.ImageImportFolder, file);
-            string destination = Path.Combine(Settings.ImageImportFolder, relPath);
+            string relPath = Path.GetRelativePath(fol, file);
+            string destination = Path.Combine(Settings.ImageRecycleFolder, relPath);
             destination = RenameUntillUnique(destination);
             MoveFile(file, destination);
             return destination;
         }
 
 
-        private async Task<ulong?> CalculateHash(string source)
+        private async Task<long?> CalculateHash(string source)
         {
-            IHashGenerator? hashGenerator = null;
+            IImageHash? hashGenerator = null;
             switch (Settings.ImageHashingAlgorithm)
             {
                 case ImageHashingAlgorithms.AHashing:
-                    hashGenerator = new ImageAHashGenerator();
+                    hashGenerator = new AverageHash();
                     break;
                 case ImageHashingAlgorithms.DHashing:
-                    hashGenerator = new ImageDHashGenerator();
+                    hashGenerator = new DifferenceHash();
                     break;
                 case ImageHashingAlgorithms.PHashing:
-                    hashGenerator = new ImagePHashGenerator();
+                    hashGenerator = new PerceptualHash();
                     break;
             }
 
             if (hashGenerator == null)
                 return null;
 
-            return await hashGenerator.Generate(source);
+            using var image = Image.Load<Rgba32>(source);
+            return (long) hashGenerator.Hash(image);
         }
 
 

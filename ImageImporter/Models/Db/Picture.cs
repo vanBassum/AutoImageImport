@@ -8,7 +8,7 @@ namespace ImageImporter.Models.Db
         [Key]
         public int Id { get; set; }
         public string? File { get; set; }
-        public ulong? Hash { get; set; }
+        public long? Hash { get; set; }
         public string? Thumbnail { get; set; }
     }
 }

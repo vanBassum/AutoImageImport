@@ -70,8 +70,8 @@ namespace ImageImporter.Migrations
                     b.Property<string>("File")
                         .HasColumnType("text");
 
-                    b.Property<byte[]>("Hash")
-                        .HasColumnType("varbinary(4000)");
+                    b.Property<long?>("Hash")
+                        .HasColumnType("bigint");
 
                     b.Property<string>("Thumbnail")
                         .HasColumnType("text");
@@ -308,10 +308,34 @@ namespace ImageImporter.Migrations
                 {
                     b.HasBaseType("ImageImporter.Models.Db.ActionItems.ActionItem");
 
-                    b.Property<bool>("Success")
-                        .HasColumnType("tinyint(1)");
+                    b.Property<string>("Destination")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("PictureId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Source")
+                        .HasColumnType("text");
+
+                    b.HasIndex("PictureId");
 
                     b.HasDiscriminator().HasValue("PictureImportItem");
+                });
+
+            modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.PictureMatchImportItem", b =>
+                {
+                    b.HasBaseType("ImageImporter.Models.Db.ActionItems.PictureImportItem");
+
+                    b.Property<bool?>("KeptSource")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("RemovedFile")
+                        .HasColumnType("text");
+
+                    b.Property<string>("RemovedFileThumbnail")
+                        .HasColumnType("text");
+
+                    b.HasDiscriminator().HasValue("PictureMatchImportItem");
                 });
 
             modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.ActionItem", b =>
@@ -374,6 +398,15 @@ namespace ImageImporter.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.PictureImportItem", b =>
+                {
+                    b.HasOne("ImageImporter.Models.Db.Picture", "Picture")
+                        .WithMany()
+                        .HasForeignKey("PictureId");
+
+                    b.Navigation("Picture");
                 });
 
             modelBuilder.Entity("ImageImporter.Models.Db.ActionItems.ActionItem", b =>

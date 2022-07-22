@@ -31,27 +31,25 @@ namespace ImageImporter.Application.Jobs
         public async Task Execute(IJobExecutionContext jobContext)
         {
             PictureImporter pictureImporter = new PictureImporter(Settings, Context);
-
             Directory.CreateDirectory(Settings.ImageImportFolder);
             var files = Directory.GetFiles(Settings.ImageImportFolder, "*", SearchOption.AllDirectories);
             int count = files.Length;
             JobResult result = new JobResult();
+            Context.Add(result);
 
             for (int i = 0; i < count; i++)
             {
                 if(pictureImporter.CheckFile(files[i]))
                 {
-                    var item = new PictureImportItem();
-                    await pictureImporter.TryImportFile(item, files[i]);
-                    result.ActionsLog.Add(item);
+                    var importResult = await pictureImporter.TryImportFile(files[i]);
+                    if(importResult != null)
+                        result.ActionsLog.Add(importResult);
                 }
 
+                await JobsTracker.ApplyJobStatistics(jobContext, result);
+                await Context.SaveChangesAsync();
                 await JobsTracker.ReportJobProgress(jobContext, i / (float)500f);
             }
-            await JobsTracker.ApplyJobStatistics(jobContext, result);
-            Context.Add(result);
-            await Context.SaveChangesAsync();
-
         }
     }
 }

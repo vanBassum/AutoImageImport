@@ -1,6 +1,6 @@
 ﻿namespace ImageImporter.Models.Db.ActionItems
 {
-    public class PictureUniqueImportItem : ActionItem
+    public class PictureImportItem : ActionItem
     {
         public string? Source { get; set; }
         public string? Destination { get; set; }
