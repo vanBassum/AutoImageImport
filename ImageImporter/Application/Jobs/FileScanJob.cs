@@ -38,6 +38,7 @@ namespace ImageImporter.Application.Jobs
             var files = Directory.GetFiles(Settings.ImageExportFolder, "*", SearchOption.AllDirectories);
             int count = files.Length;
             JobResult jobResult = new JobResult();
+            await JobsTracker.ApplyJobStatistics(jobContext, jobResult);
             Context.Add(jobResult);
 
             for (int i = 0; i < count; i++)

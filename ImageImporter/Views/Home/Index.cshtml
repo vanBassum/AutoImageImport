@@ -38,9 +38,9 @@
 								<td>@pfi.Picture.Hash</td>
 								<td>
 
-									<a href="@pfi.Picture.File">
+									<a href="@pfi.Picture.File.Replace("wwwroot", "")">
 										<div class="card icard" style="width: 18rem;">
-											<img src="@pfi.Picture.Thumbnail"/>
+											<img src="@pfi.Picture.Thumbnail.Replace("wwwroot", "")"/>
 										</div>
 									</a>
 								</td>
@@ -51,7 +51,7 @@
 								<td>@pri.Picture.Hash</td>
 								<td>
 									<div class="card icard" style="width: 18rem;">
-										<img src="@pri.Picture.Thumbnail"/>
+										<img src="@pri.Picture.Thumbnail.Replace("wwwroot", "")"/>
 									</div>
 								</td>
 									break;

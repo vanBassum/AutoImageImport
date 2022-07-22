@@ -8,15 +8,15 @@ using Quartz;
 
 namespace ImageImporter.Application.Jobs
 {
-    [JobKey(nameof(CleanRemovedFilesJob))]
+    [JobKey(nameof(FileCleanupJob))]
     [DisallowConcurrentExecution]
-    public class CleanRemovedFilesJob : IJob
+    public class FileCleanupJob : IJob
     {
         private JobsTracker JobsTracker { get; }
         private ApplicationDbContext Context { get; }
         private Settings Settings { get; }
 
-        public CleanRemovedFilesJob(JobsTracker jobsTracker, ApplicationDbContext context, Settings settings)
+        public FileCleanupJob(JobsTracker jobsTracker, ApplicationDbContext context, Settings settings)
         {
             JobsTracker = jobsTracker;
             Context = context;
@@ -47,7 +47,7 @@ namespace ImageImporter.Application.Jobs
                 await JobsTracker.ApplyJobStatistics(jobContext, jobResult);
                 await Context.SaveChangesAsync();
                 counter++;
-                await JobsTracker.ReportJobProgress(jobContext, counter * 100 / (float)list.Count);
+                await JobsTracker.ReportJobProgress(jobContext, counter / (float)list.Count);
                 
             }
         }

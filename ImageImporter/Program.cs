@@ -35,7 +35,7 @@ builder.Services.AddQuartz(quartz => {
         .WithIntervalInMinutes(2)
         .RepeatForever());
 
-    quartz.AddJob<CleanRemovedFilesJob>(x => x
+    quartz.AddJob<FileCleanupJob>(x => x
         .WithIntervalInMinutes(2)
         .RepeatForever());
 

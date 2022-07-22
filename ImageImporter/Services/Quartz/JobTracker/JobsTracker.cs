@@ -41,6 +41,7 @@ namespace ImageImporter.Services.Quartz.JobTracker
                         Jobs.Add(jobKey, new JobInfo(jobKey));
                 }
             }
+            scheduler.ListenerManager.AddJobListener(this);
         }
 
 
