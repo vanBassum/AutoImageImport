@@ -41,14 +41,9 @@ namespace ImageImporter.Application.Jobs
             for (int i = 0; i < count; i++)
             {
                 var file = files[i];
-                //check if file is already in db
-                var picture = Context.Pictures.FirstOrDefault(p=>p.File == file);
-
-                if(picture == null)
+                if(Image.Identify(file) != null)
                 {
-                    var hash = await CalculateHash(file);
-                    var matches = Context.Pictures.Where(p => p.Hash == hash);
-                    picture = await AddPictureToDb(file, hash.Value);
+                    await ImportPicture(file);
                 }
 
                 await JobsTracker.ApplyJobStatistics(jobContext, jobResult);
@@ -56,6 +51,20 @@ namespace ImageImporter.Application.Jobs
                 await JobsTracker.ReportJobProgress(jobContext, i / (float)count);
             }
         }
+
+
+        async Task ImportPicture(string file)
+        {
+            var picture = Context.Pictures.FirstOrDefault(p => p.File == file);
+            if (picture == null)
+            {
+                var hash = await CalculateHash(file);
+                var matches = Context.Pictures.Where(p => p.Hash == hash);
+                picture = await AddPictureToDb(file, hash.Value);
+            }
+        }
+
+
 
         async Task<Picture> AddPictureToDb(string file, long hash)
         {
