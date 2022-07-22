@@ -14,6 +14,12 @@ namespace ImageImporter.Data
         public DbSet<ActionItem> ActionItems { get; set; }
         public DbSet<PictureImportItem> PictureImportItems { get; set; }
         public DbSet<PictureMatchImportItem> PictureMatchImportItems { get; set; }
+        public DbSet<PictureFoundItem> PictureFoundItems { get; set; }
+        public DbSet<PictureRemovedItem> PictureRemovedItems { get; set; }
+
+
+
+        //public DbSet<PictureMatches> PictureMatches { get; set; }
 
 
         public ApplicationDbContext()

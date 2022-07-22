@@ -1,6 +1,6 @@
-﻿@using ImageImporter.Models.View
+﻿@using ImageImporter.Models.Db.ActionItems
 @using ImageImporter.Models.Enums
-@model IEnumerable<PictureImportItemViewModel>
+@model IEnumerable<ActionItem>
 
 
 @{
@@ -29,22 +29,36 @@
 				{
 					
 					<tr id="@item.Id">
-					<td>@item.ActionType.ToString()</td>
-					<td>@item.Hash</td>
-					<td>
-						
-						<a href="@item.File">
-							<div class="card icard" style="width: 18rem;">
-								<img src="@item.Thumbnail"/>
-								@if(item.ActionType == ActionType.PictureMatchImportItem)
-								{
-									<img src="@item.RemovedFileThumbnail"/>	
-								}
-							</div>
-						</a>
-						
+					
 
-					</td>
+					@switch(item)
+							{
+								case PictureFoundItem pfi:
+								<td>@item.GetType().Name</td>
+								<td>@pfi.Picture.Hash</td>
+								<td>
+
+									<a href="@pfi.Picture.File">
+										<div class="card icard" style="width: 18rem;">
+											<img src="@pfi.Picture.Thumbnail"/>
+										</div>
+									</a>
+								</td>
+									break;
+
+								case PictureRemovedItem pri:
+								<td>@item.GetType().Name</td>
+								<td>@pri.Picture.Hash</td>
+								<td>
+									<div class="card icard" style="width: 18rem;">
+										<img src="@pri.Picture.Thumbnail"/>
+									</div>
+								</td>
+									break;
+							}
+
+
+
 					</tr>
 				}
 

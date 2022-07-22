@@ -45,44 +45,43 @@ namespace ImageImporter.Controllers
             //         };
 
 
-            var recycleFolder = settings.ImageRecycleFolder;
-            var thumbnailFolder = settings.ImageThumbnailFolder;
-            var exportFolder = settings.ImageExportFolder;
-
-
-            var db = from a in context.PictureImportItems.Include(a => a.Picture)
-                     orderby a.Id descending
-                     select a;
-
-
-            var model = new List<PictureImportItemViewModel>();
-
-            foreach (var item in db.Take(100))
-            {
-                PictureImportItemViewModel piivm = new PictureImportItemViewModel();
-                piivm.Id = item.Id;
-                piivm.Source = item.Source;
-                piivm.Destination = item.Destination;
-                piivm.Hash = "0x" + Convert.ToHexString(BitConverter.GetBytes(item?.Picture?.Hash ?? 0));
-                piivm.File = item?.Picture?.File?.Replace("wwwroot", "");
-                piivm.Thumbnail = item?.Picture?.Thumbnail?.Replace("wwwroot", "");
-                piivm.ActionType = ActionType.PictureImportItem;
-
-                if (item is PictureMatchImportItem pmii)
-                {
-                    piivm.KeptSource = pmii.KeptSource;
-                    piivm.RemovedFile = pmii.RemovedFile?.Replace("wwwroot", "");
-                    piivm.RemovedFileThumbnail = pmii.RemovedFileThumbnail?.Replace("wwwroot", "");
-                    piivm.ActionType = ActionType.PictureMatchImportItem;
-                }
-                model.Add(piivm);
-            }
-                
-
+            //var recycleFolder = settings.ImageRecycleFolder;
+            //var thumbnailFolder = settings.ImageThumbnailFolder;
+            //var exportFolder = settings.ImageExportFolder;
+            //
+            //
+            //var db = from a in context.PictureImportItems.Include(a => a.Picture)
+            //         orderby a.Id descending
+            //         select a;
+            //
+            //
+            //var model = new List<PictureImportItemViewModel>();
+            //
+            //foreach (var item in db.Take(100))
+            //{
+            //    PictureImportItemViewModel piivm = new PictureImportItemViewModel();
+            //    piivm.Id = item.Id;
+            //    piivm.Source = item.Source;
+            //    piivm.Destination = item.Destination;
+            //    piivm.Hash = "0x" + Convert.ToHexString(BitConverter.GetBytes(item?.Picture?.Hash ?? 0));
+            //    piivm.File = item?.Picture?.File?.Replace("wwwroot", "");
+            //    piivm.Thumbnail = item?.Picture?.Thumbnail?.Replace("wwwroot", "");
+            //    piivm.ActionType = ActionType.PictureImportItem;
+            //
+            //    if (item is PictureMatchImportItem pmii)
+            //    {
+            //        piivm.KeptSource = pmii.KeptSource;
+            //        piivm.RemovedFile = pmii.RemovedFile?.Replace("wwwroot", "");
+            //        piivm.RemovedFileThumbnail = pmii.RemovedFileThumbnail?.Replace("wwwroot", "");
+            //        piivm.ActionType = ActionType.PictureMatchImportItem;
+            //    }
+            //    model.Add(piivm);
+            //}
 
 
 
-            return View(model);
+            var actions = context.ActionItems.OrderByDescending(a => a.Id).Take(100).ToList();
+            return View(actions);
         }
 
 

@@ -71,6 +71,7 @@ namespace ImageImporter.Services.Quartz.JobTracker
 
         public async Task ApplyJobStatistics(IJobExecutionContext context, JobResult result)
         {
+            result.Name = context.JobDetail.Key.Name;
             result.Started = context.FireTimeUtc.UtcDateTime;
             result.Duration = context.JobRunTime;
         }

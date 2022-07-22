@@ -48,7 +48,7 @@ namespace ImageImporter.Application.Jobs
 
                 await JobsTracker.ApplyJobStatistics(jobContext, result);
                 await Context.SaveChangesAsync();
-                await JobsTracker.ReportJobProgress(jobContext, i / (float)500f);
+                await JobsTracker.ReportJobProgress(jobContext, i / (float)count);
             }
         }
     }

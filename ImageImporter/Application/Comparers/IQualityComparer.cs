@@ -4,6 +4,4 @@
     {
         Task<bool> CheckIfSourceIsBetter(string source, string destination);
     }
-
-
 }

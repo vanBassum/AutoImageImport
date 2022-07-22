@@ -47,7 +47,7 @@ namespace ImageImporter.Services
                     setting.Name = propertyName;
                     setting.Value = JsonSerializer.Serialize(defVal);
                     Context.Settings.Add(setting);                      //This ensures all settings are stored in db for easy modification
-                    Context.SaveChanges(true);
+                    Context.SaveChanges();
                     return defVal;
                 }
                 return JsonSerializer.Deserialize<T>(setting.Value);
