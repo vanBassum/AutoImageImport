@@ -62,16 +62,14 @@ namespace ImageImporter.Application.Importers
 
                     if (sourceIsBetter.Value)
                     {
-                        var deleteResult = await DeleteFile(destination);
-                        if (deleteResult != null)
-                            result.ActionsLog.Add(deleteResult);
+                        result.RemovedFile = await DeleteFile(destination);
+                        result.RemovedFileThumbnail = await CreateThumbnail(result.RemovedFile);
                         MoveFile(source, destination);
                     }
                     else
                     {
-                        var deleteResult = await DeleteFile(source);
-                        if (deleteResult != null)
-                            result.ActionsLog.Add(deleteResult);
+                        result.RemovedFile = await DeleteFile(source);
+                        result.RemovedFileThumbnail = await CreateThumbnail(result.RemovedFile);
                     }
 
                     return result;
@@ -81,17 +79,13 @@ namespace ImageImporter.Application.Importers
         }
 
 
-        private async Task<ActionItem?> DeleteFile(string file)
+        private async Task<string> DeleteFile(string file)
         {
             string relPath = Path.GetRelativePath(Settings.ImageImportFolder, file);
             string destination = Path.Combine(Settings.ImageImportFolder, relPath);
             destination = RenameUntillUnique(destination);
             MoveFile(file, destination);
-            var result = new PictureRemoveItem();
-            result.Thumbnail = await CreateThumbnail(file);
-            result.Source = file;
-            result.Destination = destination;
-            return result;
+            return destination;
         }
 
 
