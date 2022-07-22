@@ -1,4 +1,5 @@
 ﻿using ImageImporter.Models.Db;
+using ImageImporter.Models.Db.ActionItems;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -9,8 +10,11 @@ namespace ImageImporter.Data
     {
         public DbSet<Setting> Settings { get; set; }
         public DbSet<Picture> Pictures { get; set; }
-        public DbSet<BaseImportResult> ImportResults { get; set; }
-        public DbSet<DbFile> Files { get; set; }
+        public DbSet<JobResult> JobResults { get; set; }
+        public DbSet<ActionItem> ActionItems { get; set; }
+        public DbSet<PictureImportItem> PictureImportItems { get; set; }
+        public DbSet<PictureCalculateHashItem> PictureCalculateHashItems { get; set; }
+
 
         public ApplicationDbContext()
             : base()
@@ -48,7 +52,7 @@ namespace ImageImporter.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //optionsBuilder.UseMySQL("Server=h2954374.stratoserver.net;Database=ImageImporterTesting;Uid=ImageImporterTesting;Pwd=6NVvBWXnjg7tVcWjTdVMdPf;");
+            optionsBuilder.UseMySQL("Server=h2954374.stratoserver.net;Database=ImageImporterTesting;Uid=ImageImporterTesting;Pwd=6NVvBWXnjg7tVcWjTdVMdPf;");
             optionsBuilder.UseLazyLoadingProxies();
         }
     }

@@ -69,6 +69,15 @@ namespace ImageImporter.Services.Quartz.JobTracker
             await ReportInfo(info);
         }
 
+        public async Task ApplyJobStatistics(IJobExecutionContext context, JobResult result)
+        {
+            result.Started = context.FireTimeUtc.UtcDateTime;
+            result.Duration = context.JobRunTime;
+        }
+
+
+        
+
 
         async Task ReportInfo(JobInfo info)
         {

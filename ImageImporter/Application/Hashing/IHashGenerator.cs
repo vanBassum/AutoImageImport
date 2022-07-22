@@ -2,7 +2,7 @@
 {
     public interface IHashGenerator
     {
-        Task<byte[]> Generate(string filename);
+        Task<ulong> Generate(string filename);
     }
 
 

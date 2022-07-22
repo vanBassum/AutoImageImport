@@ -16,7 +16,7 @@ namespace ImageImporter.Data
         public string ImageRecycleFolder { get => GetPar("wwwroot/mount/recycle/"); set => SetPar(value); }
         public string ImageThumbnailFolder { get => GetPar("wwwroot/mount/thumbnails/"); set => SetPar(value); }
         public Size ImageThumbnailSize { get => GetPar(new Size(0, 512)); set => SetPar(value); }
-        public bool ImageUseRecycleFolder { get => GetPar(true); set => SetPar(value); }
+        //public bool ImageUseRecycleFolder { get => GetPar(true); set => SetPar(value); }
         public ImageQualityCompareMethods ImageQualityCompareMethod { get => GetPar(ImageQualityCompareMethods.Resolution); set => SetPar(value); }
         public ImageHashingAlgorithms ImageHashingAlgorithm { get => GetPar(ImageHashingAlgorithms.AHashing); set => SetPar(value); }
     }
