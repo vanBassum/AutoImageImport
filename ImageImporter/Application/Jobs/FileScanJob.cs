@@ -21,6 +21,7 @@ namespace ImageImporter.Application.Jobs
         private JobsTracker JobsTracker { get; }
         private ApplicationDbContext Context { get; }
         private Settings Settings { get; }
+        private static string[] IgnoreExtentions => new string[] { ".db", ".db@SynoEAStream" };
 
         public FileScanJob(JobsTracker jobsTracker, ApplicationDbContext context, Settings settings)
         {
@@ -41,10 +42,15 @@ namespace ImageImporter.Application.Jobs
             for (int i = 0; i < count; i++)
             {
                 var file = files[i];
-                if(Image.Identify(file) != null)
+                var extention = Path.GetExtension(file);
+                if (!IgnoreExtentions.Contains(extention))
                 {
-                    await ImportPicture(file);
+                    if (Image.Identify(file) != null)
+                    {
+                        await ImportPicture(file);
+                    }
                 }
+                    
 
                 await JobsTracker.ApplyJobStatistics(jobContext, jobResult);
                 await Context.SaveChangesAsync();
