@@ -158,7 +158,7 @@ namespace ImageImporter.Application.Importers
             var path = Path.Combine(Settings.ImageThumbnailFolder, filename);
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             await image.SaveAsJpegAsync(path);
-            return filename;
+            return path;
         }
 
 

@@ -1,5 +1,6 @@
 ﻿@using ImageImporter.Models.View
-@model IEnumerable<JobInfoViewModel>
+@using ImageImporter.Models.Enums
+@model IEnumerable<PictureImportItemViewModel>
 
 
 @{
@@ -10,10 +11,47 @@
  
 <div class="container">
     <div class="row">
+
+
+
         <fieldset>
-            <legend class="FieldSet-legend-2KHms">Home</legend>
-            
+            <legend class="FieldSet-legend-2KHms">History</legend>
+            <table class="Table-table-1Ion0">
+	            <thead><tr>
+	                <th class="">Action</th>
+	                <th class="">Hash</th>
+	                <th class="">Image</th>
+	            </tr></thead>
+
+                <tbody>
+					
+                @foreach(var item in Model)
+				{
+					
+					<tr id="@item.Id">
+					<td>@item.ActionType.ToString()</td>
+					<td>@item.Hash</td>
+					<td>
+						
+						<a href="@item.File">
+							<div class="card icard" style="width: 18rem;">
+								<img src="@item.Thumbnail"/>
+								@if(item.ActionType == ActionType.PictureMatchImportItem)
+								{
+									<img src="@item.RemovedFileThumbnail"/>	
+								}
+							</div>
+						</a>
+						
+
+					</td>
+					</tr>
+				}
+
+				</tbody>
+            </table>
         </fieldset>
+
     </div>
 </div>
  

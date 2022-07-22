@@ -33,6 +33,26 @@ body {
         transform: scale(4); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
     }
 
+
+.icard {
+    max-height: 128px;
+    max-width: 128px;
+    height: auto;
+    width: auto;
+    transition: transform 0.2s ease;
+    box-shadow: 0 4px 6px 0 rgba(22, 22, 26, 0.18);
+    border-radius: 0;
+    border: 0;
+    margin-bottom: 1.5em;
+}
+
+    .icard:hover {
+        transform: scale(4); /* (150% zoom - Note: if the zoom is too large, it will go outside of the viewport) */
+        z-index: 1;
+        position: relative;
+    }
+
+
 table {
     border: 1px solid #ccc;
     border-collapse: collapse;
@@ -43,32 +63,32 @@ table {
     table-layout: auto !important;
 }
 
-    table caption {
-        font-size: 1.5em;
-        margin: .5em 0 .75em;
-        width: auto !important;
-    }
+table caption {
+    font-size: 1.5em;
+    margin: .5em 0 .75em;
+    width: auto !important;
+}
 
-    table tr {
-        background-color: #f8f8f8;
-        border: 1px solid #ddd;
-        padding: .35em;
-        width: auto !important;
-    }
+table tr {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    padding: .35em;
+    width: auto !important;
+}
 
-    table th,
-    table td {
-        padding: .625em;
-        text-align: center;
-        width: auto !important;
-    }
+table th,
+table td {
+    padding: .625em;
+    text-align: center;
+    width: auto !important;
+}
 
-    table th {
-        font-size: .85em;
-        letter-spacing: .1em;
-        text-transform: uppercase;
-        width: auto !important;
-    }
+table th {
+    font-size: .85em;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    width: auto !important;
+}
 
 @media screen and (max-width: 600px) {
     table {

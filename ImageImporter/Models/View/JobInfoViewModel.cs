@@ -1,6 +1,4 @@
-﻿
-
-using ImageImporter.Services.Quartz.JobTracker;
+﻿using ImageImporter.Services.Quartz.JobTracker;
 
 namespace ImageImporter.Models.View
 {

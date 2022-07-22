@@ -5,5 +5,4 @@
         Filesize = 0,
         Resolution = 1,
     }
-
 }

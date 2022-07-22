@@ -12,7 +12,7 @@ namespace ImageImporter.Data
         public DbSet<Picture> Pictures { get; set; }
         public DbSet<JobResult> JobResults { get; set; }
         public DbSet<ActionItem> ActionItems { get; set; }
-        public DbSet<PictureImportItem> PictureUniqueImportItems { get; set; }
+        public DbSet<PictureImportItem> PictureImportItems { get; set; }
         public DbSet<PictureMatchImportItem> PictureMatchImportItems { get; set; }
 
 
